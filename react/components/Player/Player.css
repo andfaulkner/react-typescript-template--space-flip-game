@@ -1,0 +1,22 @@
+#test_id_here {
+  border: 2px solid red;
+  padding: 10px;
+  font-size: 20px;
+}
+
+div#player.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 24px solid transparent;
+  border-right: 24px solid transparent;
+  border-bottom: 32px solid red;
+  transform: rotate(90deg); /*downR:0 |down:45 |downL:90 |L:135 |upL:180 |up:225 |upR:270 |R:315*/
+  border: 14px ridge #FFFFFF;
+  box-shadow: #FFFFFF;
+  text-shadow: #FFFFFF;
+  border-radius: 0.1px; /* weird ridge appears otherwise */
+  z-index: 1;
+}

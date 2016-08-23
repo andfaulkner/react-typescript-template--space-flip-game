@@ -1,0 +1,19 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>{{title}}</title>
+    {{#each styleLinks as |styleLink|}}
+      <link rel="stylesheet" href="{{styleLink}}" />
+    {{/each}}
+    {{#each globalScripts as |globalScript|}}
+      <script src="{{globalScript}}"></script>
+    {{/each}}
+  </head>
+  <body>
+
+    <div id="content"></div>
+
+  </body>
+</html>

@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "module": "es6",
+        "target": "es6",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "outDir": "build",
+        "noImplicitAny": false,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "allowJs": true,
+        "pretty": true,
+        "jsx": "preserve"
+    },
+    "exclude": [
+        "node_modules",
+        "docs_guides/build_js",
+        "*.js",
+        "*.json",
+        ".git",
+        ".eslintrc",
+        ".babelrc",
+        ".node-version"
+    ],
+    "filesGlob": [
+        "./typings/browser.d.ts",
+        "./react/**.tsx",
+        "./react/**.ts"
+    ],
+    "files": [
+        "react/app.tsx"
+    ]
+}
