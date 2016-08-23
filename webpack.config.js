@@ -5,7 +5,7 @@ let webpack = require('webpack');
 let HandlebarsPlugin = require('handlebars-webpack-plugin');
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-let srcPath = path.join(__dirname, 'react');
+let srcPath = path.join(__dirname, 'app');
 let buildPath = path.join(__dirname, 'build');
 let libPath = path.join(__dirname, 'node_modules');
 let configFile = "./config/config.json";
@@ -23,7 +23,7 @@ const TARGET = process.env.npm_lifecycle_event;
 process.env.BABEL_ENV = TARGET;
 
 module.exports = {
-  // context: path.join(__dirname, "react"),
+  // context: path.join(__dirname, "app"),
   entry: [
     srcFilePath('app.tsx')
   ],
@@ -62,7 +62,7 @@ module.exports = {
       { test: /\.((hbs)|(handlebars))$/, loader: "handlebars-loader" },
       // {
       //   test: /\.[jt]sx?$/,
-      //   include: [path.resolve(__dirname, 'react')],
+      //   include: [path.resolve(__dirname, 'app')],
       //   exclude: ['node_modules','typings'],
       //   query: {
       //     presets: ["react"]
@@ -128,6 +128,12 @@ module.exports = {
       data: require(configFile)['index-data']
     })
   ],
+
+  externals: {
+    'cheerio': 'window',
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': true,
+  },
 
   devServer: {
     contentBase: buildPath,

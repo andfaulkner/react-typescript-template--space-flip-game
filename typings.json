@@ -1,11 +1,15 @@
 {
-  "dependencies": {
-    "react": "registry:npm/react#15.0.1+20160601175240",
-    "react-dom": "registry:npm/react-dom#15.0.1+20160705210405"
-  },
   "globalDependencies": {
+    "babel-template": "registry:dt/babel-template#6.7.0+20160423062108",
+    "babel-traverse": "registry:dt/babel-traverse#6.7.0+20160423062108",
+    "babel-types": "registry:dt/babel-types#6.7.0+20160423062108",
+    "babylon": "registry:dt/babylon#6.7.0+20160423062108",
+    "chai": "registry:dt/chai#3.4.0+20160601211834",
+    "enzyme": "registry:dt/enzyme#2.4.1+20160709041153",
     "jquery": "registry:dt/jquery#1.10.0+20160704162008",
+    "jsdom": "registry:dt/jsdom#2.0.0+20160316155526",
     "lodash": "registry:dt/lodash#4.14.0+20160817155621",
+    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
     "node": "registry:dt/node#6.0.0+20160818175514",
     "react": "registry:dt/react#0.14.0+20160817201227",
     "react-bootstrap": "registry:dt/react-bootstrap#0.0.0+20160806072414",
