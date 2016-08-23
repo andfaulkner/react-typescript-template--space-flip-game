@@ -1,7 +1,7 @@
 # react-typescript-template--space-flip-game
 Simple WIP space 'shooting' and board flipping game.
 
-Built (and being built) to act as a template for future React applications written in Typescript along with a wide variety of tools in the React ecosystem. This application has the followign wired in:
+Built (and being built) to act as a template for future React applications written in Typescript along with a wide variety of tools in the React ecosystem. This application has the following wired in (or intended for wiring in in the near future):
 
 *   primary language: Typescript
 *   package management: npm
