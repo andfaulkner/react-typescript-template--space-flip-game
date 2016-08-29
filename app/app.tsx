@@ -12,6 +12,7 @@ import {
 } from './components/Player/Player.tsx';
 
 import { ArenaBorder } from './components/ArenaBorder/ArenaBorder';
+import { Bullet } from './components/Bullet/Bullet.tsx';
 import { KeyController } from './components/KeyController/KeyController';
 import { Clock } from './components/Clock/Clock';
 
@@ -46,13 +47,13 @@ export interface AppProps {
 export interface AppState {
   time: number;
   player: PlayerUIData;
-  bullets: Bullet[];
+  bullets: BulletProps[];
 };
 
-export interface Bullet {
+export interface BulletProps {
   xPos: number;
   yPos: number;
-  angle: number;
+  angle?: number;
   speed: number;
 }
 
@@ -117,6 +118,14 @@ class App extends React.Component<AppProps, AppState> {
             width={ this.props.spriteSize }
             {...this.state.player}
           />
+          {_.map(this.state.bullets, (bullet, index) =>
+            <Bullet
+              key={index}
+              xPos={bullet.xPos}
+              yPos={bullet.yPos}
+              speed={bullet.speed}
+            />
+          )}
           <ArenaBorder />
           <Clock time={this.state.time} />
         </div>
@@ -124,8 +133,68 @@ class App extends React.Component<AppProps, AppState> {
     );
   };
 
-  createBullet = (curState) => {
-
+  createBullet = (playerState, bullets: BulletProps[]): BulletProps[] => {
+    switch (playerState.angle) {
+      case Direction.Up:
+        bullets.push({
+          xPos: playerState.xPos,
+          yPos: playerState.yPos,
+          speed: 10
+        });
+        break;
+      case Direction.Down:
+        bullets.push({
+          xPos: playerState.xPos,
+          yPos: playerState.yPos - 40,
+          speed: 10
+        });
+        break;
+      case Direction.Left:
+        bullets.push({
+          xPos: playerState.xPos + 20,
+          yPos: playerState.yPos - 20,
+          speed: 10
+        });
+        break;
+      case Direction.Right:
+        bullets.push({
+          xPos: playerState.xPos - 20,
+          yPos: playerState.yPos - 20,
+          speed: 10
+        });
+        break;
+      case Direction.UpRight:
+        bullets.push({
+          xPos: playerState.xPos - 17,
+          yPos: playerState.yPos - 6,
+          speed: 10
+        });
+        break;
+      case Direction.UpLeft:
+        bullets.push({
+          xPos: playerState.xPos + 17,
+          yPos: playerState.yPos - 6,
+          speed: 10
+        });
+        break;
+      case Direction.DownRight:
+        bullets.push({
+          xPos: playerState.xPos - 17,
+          yPos: playerState.yPos - 36,
+          speed: 10
+        });
+        break;
+      case Direction.DownLeft:
+        bullets.push({
+          xPos: playerState.xPos + 17,
+          yPos: playerState.yPos - 36,
+          speed: 10
+        });
+        break;
+      default:
+        break;
+    }
+    return bullets;
   };
 
   // calculate new positions of all the things
@@ -146,7 +215,7 @@ class App extends React.Component<AppProps, AppState> {
 
       } else if (inputType === InputType[InputType.PlayerShoot]) {
         console.log('handleInputEvent: bang!');
-        this.createBullet(curState.player);
+        curState.bullets = this.createBullet(curState.player, curState.bullets);
 
       } else {
         console.log('resolveMovement#handleInputEvent: WTF IS THIS???');
@@ -161,6 +230,8 @@ class App extends React.Component<AppProps, AppState> {
       inputQueue = [];
       console.log('app#tick: newPositions: ', newPositions);
       this.setState(_.assign(this.state, newPositions, { time }));
+    } else {
+      this.setState(_.assign(this.state, { time }));
     }
   }
 

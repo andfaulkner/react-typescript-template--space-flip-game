@@ -85,11 +85,6 @@ export class Player extends React.Component<PlayerProps, PlayerState> implements
 
   testMethod;
 
-  constructor() {
-    super();
-    console.log(this);
-  };
-
   /**
   * Convert numeric position to px value for css - determines how much the ship should move
   */
@@ -100,7 +95,7 @@ export class Player extends React.Component<PlayerProps, PlayerState> implements
     });
 
   render() {
-    console.log('Player.tsx:: re-rendered. this: ', this);
+    // console.log('Player.tsx:: re-rendered. this: ', this);
     // console.log('this.testMethod', this.testMethod());
     return (
       <div>

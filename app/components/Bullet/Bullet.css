@@ -1,0 +1,15 @@
+div#bullet.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: 10px;
+  margin-top: -10px;
+  background-color: red;
+  border-color: black;
+  border-width: 0.1px;
+  border-style: dotted;
+  height: 7px;
+  width: 7px;
+  border-radius: 100%;
+  z-index: 1;
+}
