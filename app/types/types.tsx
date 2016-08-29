@@ -25,7 +25,7 @@ export interface Input {
   time: number;
 }
 
-export let actions = {
+export let controls = {
   ArrowUp: "RaiseSpeed",
   ArrowDown: "LowerSpeed",
   w: "Up",

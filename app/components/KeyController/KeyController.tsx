@@ -30,7 +30,7 @@ export class KeyController extends React.Component<KeyControllerProps, KeyContro
 
   render() {
     return (
-      <div>Yo</div>
+      <div></div>
     );
   }
 };

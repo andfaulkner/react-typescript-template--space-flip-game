@@ -6,40 +6,42 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as $ from 'jquery';
-import {Coordinates, PlayerColor, Dimension, Direction, Input, actions, PlayerVector} from '../../types/types.tsx';
-import {Cannon} from '../Cannon/Cannon';
+
+import {
+  Coordinates,
+  PlayerColor,
+  Dimension,
+  Direction,
+  Input,
+  controls,
+  PlayerVector
+} from '../../types/types.tsx';
+
+import { Cannon } from '../Cannon/Cannon';
 
 import { connect } from "react-redux";
 
 import { bindActionCreators } from "redux";
-import * as MyActions from "../../redux/actions/changePlayerPosition";
+import * as MyActions from "../../actions/changePlayerPosition";
 
 require('./Player.css');
 
 // enum Action { Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft, RaiseSpeed, LowerSpeed }
 
 export interface PlayerState {
-  xPos: number;
-  yPos: number;
-  angle: number;
-  speed: number;
+  // xPos: number;
+  // yPos: number;
+  // angle: number;
+  // speed: number;
 }
 
 export interface PlayerProps {
+  angle: number;
+  speed: number;
+  xPos: number;
+  yPos: number;
   width: number;
   color: PlayerColor;
-  input: Input;
-}
-
-function mapStateToProps(state) {
-  return {
-    massagedFoo: state.myAction.massagedFoo,
-    message: state.myAction.message
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(MyActions, dispatch);
 }
 
 export class Player extends React.Component<PlayerProps, PlayerState> {
@@ -51,9 +53,9 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
     speed: 3
   };
 
-  componentDidMount = (): void => {
-    document.onkeydown = this.events.keypress;
-  }
+  // componentDidMount = (): void => {
+  //   document.onkeydown = this.events.keypress;
+  // }
 
   /**
    * Ensure player sprite is in bounds on the given dimension
@@ -74,8 +76,8 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
    */
   keepInBounds = (xPos: number, yPos: number): Coordinates => (
     {
-      xPos: this.checkInBounds_1D(xPos, Dimension.width, this.state),
-      yPos: this.checkInBounds_1D(yPos, Dimension.width, this.state)
+      xPos: this.checkInBounds_1D(xPos, Dimension.width, this.props),
+      yPos: this.checkInBounds_1D(yPos, Dimension.width, this.props)
     });
 
   /**
@@ -95,7 +97,7 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
                                  (action.match(/Right/g) ? -1 * speed : 0));
     console.log('Player.tsx:: move: xPosNew: ', xPosNew, '; yPosNew: ', yPosNew);
 
-    this.setState(Object.assign({}, this.state,
+    this.setState(Object.assign({}, this.props,
                                 this.keepInBounds(xPosNew, yPosNew),
                                 {speed: this.adjustSpeed(action, speed),
                                  angle: this.rotate(action)}));
@@ -106,24 +108,16 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
     let currentDirection: Direction = Direction[keyName];
     console.log('Player.jsx: rotate: currentDirection', currentDirection);
     /*downR:0 |down:45 |downL:90 |L:135 |upL:180 |up:225 |upR:270 |R:315*/
-    return currentDirection || this.state.angle;
+    return currentDirection || this.props.angle;
   }
 
-  events = {
-    keypress: (e: KeyboardEvent): void => {
-      console.log('e:', e);
-      let keyName = _.get(actions, e.key);
-      if (_.isString(keyName)) {
-        this.move(this.state, e.key, keyName);
-        this.rotate(keyName);
-      }
-    }
-  };
-
+  /**
+  * Determine how much the ship should move
+  */
   calcOffset = (): {marginTop: string; marginLeft: string} => (
     {
-      marginTop: (-1 * this.state.yPos) + 'px',
-      marginLeft: (-1 * this.state.xPos) + 'px'
+      marginTop: (-1 * this.props.yPos) + 'px',
+      marginLeft: (-1 * this.props.xPos) + 'px'
     });
 
   render() {
@@ -131,8 +125,9 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
     return (
       <div>
         <div className="centered" id="player" style={
-          Object.assign({}, this.calcOffset(),
-            {transform: `rotate(${this.state.angle}deg)`})
+          Object.assign({},
+            this.calcOffset(),
+            {transform: `rotate(${this.props.angle}deg)`})
         }>
         </div>
       </div>

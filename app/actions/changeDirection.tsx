@@ -1,5 +1,5 @@
 import Action from './action.tsx';
-import { Direction } from '../../types/types.tsx';
+import { Direction } from '../types/types.tsx';
 
 export const CHANGE_DIRECTION = 'CHANGE_DIRECTION';
 export type CHANGE_DIRECTION = { direction: Direction };

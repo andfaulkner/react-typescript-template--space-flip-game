@@ -1,13 +1,14 @@
-/// <reference path="../../typings/index.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 
-import { Direction } from '../types/types.tsx';
-import { PlayerState } from '../components/Player/Player.tsx';
+import { Direction } from './types/types.tsx';
+import { PlayerState } from './components/Player/Player.tsx';
 
 import { createStore, applyMiddleware } from 'redux';
-import { logger } from './middlewares';
+import { logger } from './middleware/logger';
 
 import Action from './actions/action';
-import changePlayerPositionReducer from './reducers/changePlayerPosition';
+import reducers from './reducers';
+
 
 // // ACTIONS
 // export const CHANGE_DIRECTION = 'CHANGE_DIRECTION';
@@ -65,6 +66,6 @@ import changePlayerPositionReducer from './reducers/changePlayerPosition';
 // };
 
 export let store = createStore(
-  changePlayerPositionReducer,
+  reducers,
   applyMiddleware(logger)
 );
