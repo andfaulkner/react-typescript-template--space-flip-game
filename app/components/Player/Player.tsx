@@ -91,7 +91,7 @@ export class Player extends React.Component<PlayerProps, PlayerState> implements
   };
 
   /**
-  * Determine how much the ship should move
+  * Convert numeric position to px value for css - determines how much the ship should move
   */
   calcOffset = (): {marginTop: string; marginLeft: string} => (
     {
@@ -101,7 +101,7 @@ export class Player extends React.Component<PlayerProps, PlayerState> implements
 
   render() {
     console.log('Player.tsx:: re-rendered. this: ', this);
-    console.log('this.testMethod', this.testMethod());
+    // console.log('this.testMethod', this.testMethod());
     return (
       <div>
         <div className="centered" id="player" style={

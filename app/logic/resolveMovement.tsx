@@ -137,25 +137,3 @@ export const resolveSpeed = (speed: number, keyPressed: string): number => {
       return speed;
   }
 };
-
-// calculate new positions of all the things
-export const calcNewPositions = (curState, inputQueue: InputEvent[]) => {
-  console.log('resolveMovement#calcNewPositions: inputQueue', inputQueue);
-
-  _.each(inputQueue, (inputEvent: InputEvent) => {
-
-    if (InputType[inputEvent.type] === InputType[InputType.PlayerMove]) {
-      let newPosition = resolvePosition(curState.player, inputEvent.data.keyPressed);
-      console.log('calcNewPositions: playerMoved: newPosition', newPosition);
-      curState.player = newPosition;
-
-    } else if (InputType[inputEvent.type] === InputType[InputType.PlayerSpeedChange]) {
-      console.log('resolveMovement#calcNewPositions: PlayerSpeedChange');
-      curState.player.speed = resolveSpeed(curState.player.speed, inputEvent.data.keyPressed);
-
-    } else {
-      console.log('resolveMovement#calcNewPositions: WTF IS THIS???');
-    }
-  });
-  return curState;
-};

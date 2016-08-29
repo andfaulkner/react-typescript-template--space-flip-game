@@ -27,7 +27,7 @@ import {
   InputEvent,
   controls } from './types/types.tsx';
 
-import { calcNewPositions } from './logic/resolveMovement.tsx';
+import { resolvePosition, resolveSpeed } from './logic/resolveMovement.tsx';
 
 import { Provider } from 'react-redux';
 import { store } from './store.tsx'; // only import from here
@@ -46,7 +46,15 @@ export interface AppProps {
 export interface AppState {
   time: number;
   player: PlayerUIData;
+  bullets: Bullet[];
 };
+
+export interface Bullet {
+  xPos: number;
+  yPos: number;
+  angle: number;
+  speed: number;
+}
 
 /**
  * Wrap App with Redux store.
@@ -61,85 +69,6 @@ class Root extends React.Component<{}, {}> {
   }
 };
 
-// let positionResolver = {
-//   rotate: (angle: number, keyName: string): number => {
-//     console.log('Player#rotate: keyName', keyName);
-//     let curDirection: Direction = Direction[keyName];
-//     console.log('Player.jsx: rotate: curDirection', curDirection);
-//     /*downR:0 |down:45 |downL:90 |L:135 |upL:180 |up:225 |upR:270 |R:315*/
-//     return curDirection || angle;
-//   },
-
-//   resolvePlayerPosition: ({ xPos, yPos, speed, angle }: PlayerUIData, direction: Direction): PlayerUIData => {
-//     console.log('resolvePlayerPosition: direction', direction);
-//     let hypoteneuse = (speed / 1.4142);
-
-//     switch (direction.toString()) {
-//       case "Up":
-//         return {
-//           xPos,
-//           yPos: yPos + speed,
-//           angle: this.rotate(angle, "Up"),
-//           speed
-//         };
-//       case "UpLeft":
-//         return {
-//           xPos: xPos + (speed / 1.4142),
-//           yPos: yPos + (speed / 1.4142),
-//           angle: this.rotate(angle, "UpLeft"),
-//           speed
-//         };
-//       case "Left":
-//         return {
-//           xPos: xPos + speed,
-//           yPos,
-//           angle: this.rotate(angle, "Left"),
-//           speed
-//         };
-//       case "DownLeft":
-//         return {
-//           xPos: xPos + hypoteneuse,
-//           yPos: yPos - hypoteneuse,
-//           angle: this.rotate(angle, "DownLeft"),
-//           speed
-//         };
-//       case "Down":
-//         return {
-//           xPos,
-//           yPos: yPos - speed,
-//           angle: this.rotate(angle, "Down"),
-//           speed
-//         };
-//       case "DownRight":
-//         return {
-//           xPos: xPos - hypoteneuse,
-//           yPos: yPos - hypoteneuse,
-//           angle: this.rotate(angle, "DownRight"),
-//           speed
-//         };
-//       case "Right":
-//         return {
-//           xPos: xPos - speed,
-//           yPos,
-//           angle: this.rotate(angle, "Right"),
-//           speed
-//         };
-//       case "UpRight":
-//         return {
-//           xPos: xPos - (speed / 1.4142),
-//           yPos: yPos + (speed / 1.4142),
-//           angle: this.rotate(angle, "UpRight"),
-//           speed
-//         };
-//       default:
-//         console.log('resolvePlayerPosition: other value');
-//         return { xPos, yPos, angle, speed };
-//     }
-//   }
-// }
-
-
-
 /**
  * Entry point for the whole application (excepting the redux wrapper)
  */
@@ -151,7 +80,8 @@ class App extends React.Component<AppProps, AppState> {
       yPos: 0,
       angle: 225,
       speed: 3
-    }
+    },
+    bullets: []
   };
 
   componentWillMount = () => requestAnimationFrame(this.tick);
@@ -166,11 +96,14 @@ class App extends React.Component<AppProps, AppState> {
   */
     keypress: (e: KeyboardEvent): void => {
       console.log('e:', e);
-      let keyName = _.get(controls, e.key);
-      if (_.isString(keyName) && !_.includes(keyName, 'Speed')) {
-        inputQueue.push({ type: InputType.PlayerMove, data: { keyPressed: keyName } });
-      } else if (_.isString(keyName) && _.includes(keyName, 'Speed')) {
+      let keyName = _.get(controls, e.key).toString();
+      if (_.includes(keyName, 'Shoot')) {
+        console.log('bang bang');
+        inputQueue.push({ type: InputType.PlayerShoot, data: { keyPressed: keyName } });
+      } else if (_.includes(keyName, 'Speed')) {
         inputQueue.push({ type: InputType.PlayerSpeedChange, data: { keyPressed: keyName } });
+      } else {
+        inputQueue.push({ type: InputType.PlayerMove, data: { keyPressed: keyName } });
       }
     }
   };
@@ -178,9 +111,7 @@ class App extends React.Component<AppProps, AppState> {
   render() {
     return (
       <Provider store={store}>
-        <div
-          onKeyDown = { this.events.keypress.bind(this) }
-        >
+        <div onKeyDown = { this.events.keypress.bind(this) }>
           <Player
             color={ PlayerColor.Red }
             width={ this.props.spriteSize }
@@ -193,22 +124,53 @@ class App extends React.Component<AppProps, AppState> {
     );
   };
 
+  createBullet = (curState) => {
+
+  };
+
+  // calculate new positions of all the things
+  handleInputEvent = (curState, inputQueue: InputEvent[]) => {
+    console.log('resolveMovement#handleInputEvent: inputQueue', inputQueue);
+
+    _.each(inputQueue, (inputEvent: InputEvent) => {
+      let inputType = InputType[inputEvent.type];
+
+      if (inputType === InputType[InputType.PlayerMove]) {
+        let newPosition = resolvePosition(curState.player, inputEvent.data.keyPressed);
+        console.log('handleInputEvent: playerMoved: newPosition', newPosition);
+        curState.player = newPosition;
+
+      } else if (inputType === InputType[InputType.PlayerSpeedChange]) {
+        console.log('resolveMovement#handleInputEvent: PlayerSpeedChange');
+        curState.player.speed = resolveSpeed(curState.player.speed, inputEvent.data.keyPressed);
+
+      } else if (inputType === InputType[InputType.PlayerShoot]) {
+        console.log('handleInputEvent: bang!');
+        this.createBullet(curState.player);
+
+      } else {
+        console.log('resolveMovement#handleInputEvent: WTF IS THIS???');
+      }
+    });
+    return curState;
+  };
+
   handleInput = (time: number) => {
     if (inputQueue.length > 0) { // do nothing if there are no input events
-      let newPositions = calcNewPositions(this.state, inputQueue);
+      let newPositions = this.handleInputEvent(this.state, inputQueue);
       inputQueue = [];
       console.log('app#tick: newPositions: ', newPositions);
       this.setState(_.assign(this.state, newPositions, { time }));
     }
   }
 
-  // ON TICK:
-  //   get input;   update game state;   render;    repeat;
-  //   get queue from redux
-  //   resolve position of all onscreen items
-  //   ! save empty queue
   /**
-   * The game loop. Coordinates everything. Changes propagate down the tree every time it ticks
+   * The game loop. Coordinates everything. Changes propagate down the tree every time it ticks.
+   *
+   * Each tick: 1) get input (from inputQueue);
+   *            2) Calculate new app state (resolve position of items), then update stored app state
+   *            3) re-render views
+   *            4) Clear inputQueue
    */
   tick = () => {
     let time = Date.now();

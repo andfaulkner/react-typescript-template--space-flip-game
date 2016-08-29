@@ -43,7 +43,7 @@ export let controls = {
   z: "DownLeft",
   a: "Left",
   q: "UpLeft",
-  ' ': "Space"
+  ' ': "Shoot",
 };
 
 export interface Coordinates {
@@ -66,7 +66,8 @@ export interface PlayerUIData {
 
 export enum InputType {
   PlayerMove,
-  PlayerSpeedChange
+  PlayerSpeedChange,
+  PlayerShoot
 }
 
 export interface InputEvent {
