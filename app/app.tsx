@@ -1,36 +1,45 @@
-/// <reference path="../typings/globals/react/index.d.ts" />
-/// <reference path="../typings/globals/react-dom/index.d.ts" />
-/// <reference path="../typings/globals/react-bootstrap/index.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { Button } from 'react-bootstrap';
 
-import { TestComponent } from './components/TestComponent';
-// import { Header } from './components/Header';
-import { Player } from './components/Player/Player';
+import { Player } from './components/Player/Player.tsx';
 import { ArenaBorder } from './components/ArenaBorder/ArenaBorder';
 import { KeyController } from './components/KeyController/KeyController';
 
-import { PlayerColor } from './enums/enums';
+import { PlayerColor, Input } from './types/types.tsx';
 
+import { Provider } from 'react-redux';
+import { store } from './redux/store.tsx'; // only import from here
+
+console.log('js loaded');
+
+// INTERFACES
 export interface AppProps {
   spriteSize: number;
 };
 
-export interface Input {
-  time: number;
-}
-
-interface AppState {
+export interface AppState {
   input: Input;
 };
 
-console.log('js loaded');
+/**
+ * Wrap App with Redux store.
+ */
+class Root extends React.Component<{}, {}> {
+  render() {
+    return (
+      <Provider store={store}>
+        <App spriteSize={20} />
+      </Provider>
+    );
+  }
+};
 
 /**
- * Entry point for the whole application
+ * Entry point for the whole application (excepting the redux wrapper)
  */
 class App extends React.Component<AppProps, AppState> {
   state: AppState = {
@@ -43,15 +52,17 @@ class App extends React.Component<AppProps, AppState> {
 
   render() {
     return (
-      <div>
-        <KeyController input={ this.state.input } />
-        <Player
-          input={ this.state.input }
-          color={ PlayerColor.Red }
-          width={ this.props.spriteSize }
-        />
-        <ArenaBorder />
-      </div>
+      <Provider store={store}>
+        <div>
+          <KeyController input={ this.state.input } />
+          <Player
+            input={ this.state.input }
+            color={ PlayerColor.Red }
+            width={ this.props.spriteSize }
+          />
+          <ArenaBorder />
+        </div>
+      </Provider>
     );
   };
 
@@ -69,7 +80,7 @@ class App extends React.Component<AppProps, AppState> {
 document.addEventListener("DOMContentLoaded", function(event) {
   console.log('DOM loaded - mounting React');
   ReactDOM.render(
-    <App spriteSize={ 20 } />,
+    <Root />,
     document.getElementById('content')
   );
 });

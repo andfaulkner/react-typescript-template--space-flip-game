@@ -11,9 +11,8 @@ import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 import { expect } from 'chai';
 
-import { Input } from '../../app/app';
-import { Player, PlayerVector, PlayerState, PlayerProps } from '../../app/components/Player/Player';
-import { PlayerColor, Dimension } from '../../app/enums/enums';
+import { Player, PlayerState, PlayerProps } from '../../app/components/Player/Player';
+import { PlayerColor, Dimension, PlayerVector, Input } from '../../app/types/types';
 
 describe('<Player />', () => {
 

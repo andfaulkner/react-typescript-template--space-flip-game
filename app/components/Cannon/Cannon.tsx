@@ -23,7 +23,7 @@ export class Cannon extends React.Component<CannonProps, CannonState> {
 
   events = {
     spacePressed: (e) => {
-      console.log('e:', e);
+      console.log('Cannon.tsx: e:', e);
     }
   };
 

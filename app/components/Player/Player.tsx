@@ -1,8 +1,4 @@
-/// <reference path="../../../typings/globals/jquery/index.d.ts" />
-/// <reference path="../../../typings/globals/react/index.d.ts" />
-/// <reference path="../../../typings/globals/react-dom/index.d.ts" />
-/// <reference path="../../../typings/globals/lodash/index.d.ts" />
-
+/// <reference path="../../../typings/index.d.ts" />
 
 declare function require(name: string);
 
@@ -10,22 +6,12 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as $ from 'jquery';
-import {PlayerColor, Dimension, Direction} from '../../enums/enums';
+import {Coordinates, PlayerColor, Dimension, Direction, Input, actions, PlayerVector} from '../../types/types.tsx';
 import {Cannon} from '../Cannon/Cannon';
-import {Input} from '../../app';
 
 require('./Player.css');
 
-interface Coordinates {
-  xPos: number;
-  yPos: number;
-}
-
-export interface PlayerVector {
-  xPos: number;
-  yPos: number;
-  speed: number;
-}
+// enum Action { Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft, RaiseSpeed, LowerSpeed }
 
 export interface PlayerState {
   xPos: number;
@@ -39,22 +25,6 @@ export interface PlayerProps {
   color: PlayerColor;
   input: Input;
 }
-
-// enum Action { Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft, RaiseSpeed, LowerSpeed }
-let actions = {
-  ArrowUp: "RaiseSpeed",
-  ArrowDown: "LowerSpeed",
-  w: "Up",
-  e: "UpRight",
-  d: "Right",
-  c: "DownRight",
-  s: "Down",
-  x: "Down",
-  z: "DownLeft",
-  a: "Left",
-  q: "UpLeft"
-};
-
 
 export class Player extends React.Component<PlayerProps, PlayerState> {
 
@@ -72,7 +42,8 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
   /**
    * Ensure player sprite is in bounds on the given dimension
    */
-  checkInBounds_1D = (position: number, dimen: Dimension, state: PlayerVector | PlayerState): number => {
+  checkInBounds_1D = (position: number, dimen: Dimension,
+                      state: PlayerVector | PlayerState): number => {
     if (position >= 300) {
       return 300;
     }

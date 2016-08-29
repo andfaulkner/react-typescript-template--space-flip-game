@@ -6,6 +6,7 @@
     "babylon": "registry:dt/babylon#6.7.0+20160423062108",
     "chai": "registry:dt/chai#3.4.0+20160601211834",
     "enzyme": "registry:dt/enzyme#2.4.1+20160709041153",
+    "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
     "jquery": "registry:dt/jquery#1.10.0+20160704162008",
     "jsdom": "registry:dt/jsdom#2.0.0+20160316155526",
     "lodash": "registry:dt/lodash#4.14.0+20160817155621",
@@ -13,6 +14,9 @@
     "node": "registry:dt/node#6.0.0+20160818175514",
     "react": "registry:dt/react#0.14.0+20160817201227",
     "react-bootstrap": "registry:dt/react-bootstrap#0.0.0+20160806072414",
-    "react-dom": "registry:dt/react-dom#0.14.0+20160412154040"
+    "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
+    "react-redux": "registry:dt/react-redux#4.4.0+20160724070751",
+    "redux": "registry:dt/redux#3.5.2+20160703092728",
+    "redux-actions": "registry:dt/redux-actions#0.8.0+20160521154116"
   }
 }
