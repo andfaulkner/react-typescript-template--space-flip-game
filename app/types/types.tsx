@@ -51,17 +51,12 @@ export interface Coordinates {
   yPos: number;
 }
 
-export interface PlayerVector {
-  xPos: number;
-  yPos: number;
+export interface PlayerVector extends Coordinates {
   speed: number;
 }
 
-export interface PlayerUIData {
-  xPos: number;
-  yPos: number;
+export interface PlayerUIData extends PlayerVector {
   angle: number;
-  speed: number;
 }
 
 export enum InputType {
@@ -73,4 +68,8 @@ export enum InputType {
 export interface InputEvent {
   type: InputType;
   data: any;
+}
+
+export interface BulletProps extends PlayerVector {
+  angle?: number;
 }

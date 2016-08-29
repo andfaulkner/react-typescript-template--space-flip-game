@@ -26,9 +26,11 @@ import {
   PlayerUIData,
   InputType,
   InputEvent,
+  BulletProps,
   controls } from './types/types.tsx';
 
 import { resolvePosition, resolveSpeed } from './logic/resolveMovement.tsx';
+import { createBullet } from './logic/createBullet.tsx';
 
 import { Provider } from 'react-redux';
 import { store } from './store.tsx'; // only import from here
@@ -49,13 +51,6 @@ export interface AppState {
   player: PlayerUIData;
   bullets: BulletProps[];
 };
-
-export interface BulletProps {
-  xPos: number;
-  yPos: number;
-  angle?: number;
-  speed: number;
-}
 
 /**
  * Wrap App with Redux store.
@@ -133,106 +128,102 @@ class App extends React.Component<AppProps, AppState> {
     );
   };
 
-  createBullet = (playerState, bullets: BulletProps[]): BulletProps[] => {
-    switch (playerState.angle) {
-      case Direction.Up:
-        bullets.push({
-          xPos: playerState.xPos,
-          yPos: playerState.yPos,
-          speed: 10
-        });
-        break;
-      case Direction.Down:
-        bullets.push({
-          xPos: playerState.xPos,
-          yPos: playerState.yPos - 40,
-          speed: 10
-        });
-        break;
-      case Direction.Left:
-        bullets.push({
-          xPos: playerState.xPos + 20,
-          yPos: playerState.yPos - 20,
-          speed: 10
-        });
-        break;
-      case Direction.Right:
-        bullets.push({
-          xPos: playerState.xPos - 20,
-          yPos: playerState.yPos - 20,
-          speed: 10
-        });
-        break;
-      case Direction.UpRight:
-        bullets.push({
-          xPos: playerState.xPos - 17,
-          yPos: playerState.yPos - 6,
-          speed: 10
-        });
-        break;
-      case Direction.UpLeft:
-        bullets.push({
-          xPos: playerState.xPos + 17,
-          yPos: playerState.yPos - 6,
-          speed: 10
-        });
-        break;
-      case Direction.DownRight:
-        bullets.push({
-          xPos: playerState.xPos - 17,
-          yPos: playerState.yPos - 36,
-          speed: 10
-        });
-        break;
-      case Direction.DownLeft:
-        bullets.push({
-          xPos: playerState.xPos + 17,
-          yPos: playerState.yPos - 36,
-          speed: 10
-        });
-        break;
-      default:
-        break;
-    }
-    return bullets;
-  };
-
-  // calculate new positions of all the things
-  handleInputEvent = (curState, inputQueue: InputEvent[]) => {
-    console.log('resolveMovement#handleInputEvent: inputQueue', inputQueue);
+  /**
+   * calculate new positions of all the things
+   */
+  handleInputQueue = (curState, inputQueue: InputEvent[]) => {
+    console.log('resolveMovement#handleInputQueue: inputQueue', inputQueue);
 
     _.each(inputQueue, (inputEvent: InputEvent) => {
       let inputType = InputType[inputEvent.type];
 
       if (inputType === InputType[InputType.PlayerMove]) {
         let newPosition = resolvePosition(curState.player, inputEvent.data.keyPressed);
-        console.log('handleInputEvent: playerMoved: newPosition', newPosition);
+        console.log('handleInputQueue: playerMoved: newPosition', newPosition);
         curState.player = newPosition;
 
       } else if (inputType === InputType[InputType.PlayerSpeedChange]) {
-        console.log('resolveMovement#handleInputEvent: PlayerSpeedChange');
+        console.log('resolveMovement#handleInputQueue: PlayerSpeedChange');
         curState.player.speed = resolveSpeed(curState.player.speed, inputEvent.data.keyPressed);
 
       } else if (inputType === InputType[InputType.PlayerShoot]) {
-        console.log('handleInputEvent: bang!');
-        curState.bullets = this.createBullet(curState.player, curState.bullets);
+        console.log('handleInputQueue: bang!');
+        curState.bullets = createBullet(curState.player, curState.bullets);
 
       } else {
-        console.log('resolveMovement#handleInputEvent: WTF IS THIS???');
+        console.log('resolveMovement#handleInputQueue: WTF IS THIS???');
       }
     });
     return curState;
   };
 
-  handleInput = (time: number) => {
+  /**
+   * Handle UI changes that occur as a direct result of user input (e.g. player movement, shooting)
+   */
+  handleInput = (time: number, newPositions) => {
     if (inputQueue.length > 0) { // do nothing if there are no input events
-      let newPositions = this.handleInputEvent(this.state, inputQueue);
+      newPositions = this.handleInputQueue(newPositions, inputQueue);
       inputQueue = [];
       console.log('app#tick: newPositions: ', newPositions);
-      this.setState(_.assign(this.state, newPositions, { time }));
-    } else {
-      this.setState(_.assign(this.state, { time }));
     }
+    return newPositions;
+  }
+
+  moveBullets = (bullets: BulletProps[]): BulletProps[] => {
+    return _.map(bullets, (bullet: BulletProps) => {
+      let {xPos, yPos, speed} = bullet;
+      let hypoteneuse = (speed / 1.4142);
+
+      switch (Direction[bullet.angle].toString()) {
+        case "Up":
+          bullet.yPos = yPos + speed;
+          break;
+        case "UpLeft":
+          bullet.yPos = yPos + hypoteneuse;
+          bullet.xPos = xPos + hypoteneuse;
+          break;
+        case "UpRight":
+          bullet.xPos = xPos - hypoteneuse;
+          bullet.yPos = yPos + hypoteneuse;
+          break;
+        case "DownLeft":
+          bullet.xPos = xPos + hypoteneuse;
+          bullet.yPos = yPos - hypoteneuse;
+          break;
+        case "DownRight":
+          bullet.xPos = xPos - hypoteneuse;
+          bullet.yPos = yPos - hypoteneuse;
+          break;
+        case "Down":
+          bullet.yPos = yPos - speed;
+          break;
+        case "Right":
+          bullet.xPos = xPos - speed;
+          break;
+        case "Left":
+          bullet.xPos = xPos + speed;
+          break;
+        default:
+          console.log('app.tsx#handleUpdates: ERROR: unknown direction:', Direction[bullet.angle]);
+          break;
+      }
+      return bullet;
+    });
+  }
+
+  updateBulletPositions = (bullets: BulletProps[]) => {
+    bullets = this.moveBullets(bullets);
+    bullets = _.filter(bullets, (bullet) =>
+      (bullet.xPos < 310 && bullet.xPos > -283 && bullet.yPos < 290 && bullet.yPos > -303));
+    return bullets;
+  }
+
+  /**
+   * Handle UI changes that occur without input from the user (e.g. bullet and enemy movement)
+   */
+  handleUpdates = (curState) => {
+    curState.bullets = this.updateBulletPositions(curState.bullets);
+    return curState;
   }
 
   /**
@@ -247,7 +238,9 @@ class App extends React.Component<AppProps, AppState> {
     let time = Date.now();
     if (time - lastRender > 100) { // ensure game loop only ticks 10X / s
       lastRender = time;
-      this.handleInput(time);
+      let newPositions = this.handleInput(time, this.state);
+      newPositions = this.handleUpdates(newPositions);
+      this.setState(_.assign(this.state, newPositions, { time }));
     }
     requestAnimationFrame(this.tick);
   };
