@@ -14,7 +14,7 @@ import {
   Direction,
   Input,
   controls,
-  PlayerVector
+  UIEntityVector
 } from '../../types/types.tsx';
 
 import { Cannon } from '../Cannon/Cannon';

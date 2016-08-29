@@ -15,22 +15,27 @@ import { ArenaBorder } from './components/ArenaBorder/ArenaBorder';
 import { Bullet } from './components/Bullet/Bullet.tsx';
 import { KeyController } from './components/KeyController/KeyController';
 import { Clock } from './components/Clock/Clock';
+import { Enemy } from './components/Enemy/Enemy';
 
 import {
   PlayerColor,
   Direction,
   Dimension,
-  PlayerVector,
+  UIEntityVector,
   Coordinates,
   SpeedChange,
-  PlayerUIData,
+  UIEntityProps,
   InputType,
   InputEvent,
-  BulletProps,
   controls } from './types/types.tsx';
 
-import { resolvePosition, resolveSpeed } from './logic/resolveMovement.tsx';
+import {
+  resolvePosition,
+  resolveSpeed
+} from './logic/resolvePlayerMovement.tsx';
+
 import { createBullet } from './logic/createBullet.tsx';
+import { updateBulletPositions } from './logic/resolveBulletMovement.tsx';
 
 import { Provider } from 'react-redux';
 import { store } from './store.tsx'; // only import from here
@@ -48,8 +53,9 @@ export interface AppProps {
 
 export interface AppState {
   time: number;
-  player: PlayerUIData;
-  bullets: BulletProps[];
+  player: UIEntityProps;
+  bullets: UIEntityProps[];
+  enemies: UIEntityProps[];
 };
 
 /**
@@ -77,7 +83,8 @@ class App extends React.Component<AppProps, AppState> {
       angle: 225,
       speed: 3
     },
-    bullets: []
+    bullets: [],
+    enemies: []
   };
 
   componentWillMount = () => requestAnimationFrame(this.tick);
@@ -116,9 +123,13 @@ class App extends React.Component<AppProps, AppState> {
           {_.map(this.state.bullets, (bullet, index) =>
             <Bullet
               key={index}
-              xPos={bullet.xPos}
-              yPos={bullet.yPos}
-              speed={bullet.speed}
+              {...bullet}
+            />
+          )}
+          {_.map(this.state.enemies, (enemy, index) =>
+            <Enemy
+              key={index}
+              {...enemy}
             />
           )}
           <ArenaBorder />
@@ -169,60 +180,35 @@ class App extends React.Component<AppProps, AppState> {
     return newPositions;
   }
 
-  moveBullets = (bullets: BulletProps[]): BulletProps[] => {
-    return _.map(bullets, (bullet: BulletProps) => {
-      let {xPos, yPos, speed} = bullet;
-      let hypoteneuse = (speed / 1.4142);
-
-      switch (Direction[bullet.angle].toString()) {
-        case "Up":
-          bullet.yPos = yPos + speed;
-          break;
-        case "UpLeft":
-          bullet.yPos = yPos + hypoteneuse;
-          bullet.xPos = xPos + hypoteneuse;
-          break;
-        case "UpRight":
-          bullet.xPos = xPos - hypoteneuse;
-          bullet.yPos = yPos + hypoteneuse;
-          break;
-        case "DownLeft":
-          bullet.xPos = xPos + hypoteneuse;
-          bullet.yPos = yPos - hypoteneuse;
-          break;
-        case "DownRight":
-          bullet.xPos = xPos - hypoteneuse;
-          bullet.yPos = yPos - hypoteneuse;
-          break;
-        case "Down":
-          bullet.yPos = yPos - speed;
-          break;
-        case "Right":
-          bullet.xPos = xPos - speed;
-          break;
-        case "Left":
-          bullet.xPos = xPos + speed;
-          break;
-        default:
-          console.log('app.tsx#handleUpdates: ERROR: unknown direction:', Direction[bullet.angle]);
-          break;
-      }
-      return bullet;
-    });
-  }
-
-  updateBulletPositions = (bullets: BulletProps[]) => {
-    bullets = this.moveBullets(bullets);
-    bullets = _.filter(bullets, (bullet) =>
-      (bullet.xPos < 310 && bullet.xPos > -283 && bullet.yPos < 290 && bullet.yPos > -303));
-    return bullets;
+  /**
+   * Randomly generate enemies.
+   */
+  updateEnemyGeneration = (curState, enemies, odds: number = 40) => {
+    // create enemy at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
+    if ((enemies.length <= 10) && (_.random(0, 40) === 40)) {
+      console.log('app.tsx:: updateEnemyGeneration: enemy created!');
+      const genPositions = () => {
+        let xPos = _.random(-260, 260);
+        let yPos = _.random(-260, 260);
+        if (Math.abs(curState.player.xPos - xPos) < 15) {
+          return (Math.abs(curState.player.yPos - yPos) > 30) ? { xPos, yPos } : genPositions();
+        } else if (Math.abs(curState.player.yPos - yPos) < 15) {
+          return (Math.abs(curState.player.xPos - xPos) > 30) ? { xPos, yPos } : genPositions();
+        } else {
+          return { xPos, yPos };
+        }
+      };
+      enemies.push(Object.assign({}, genPositions(), { speed: 2, angle: Direction.Up }));
+    }
+    return enemies;
   }
 
   /**
    * Handle UI changes that occur without input from the user (e.g. bullet and enemy movement)
    */
   handleUpdates = (curState) => {
-    curState.bullets = this.updateBulletPositions(curState.bullets);
+    curState.bullets = updateBulletPositions(curState.bullets);
+    curState.enemies = this.updateEnemyGeneration(curState, curState.enemies);
     return curState;
   }
 

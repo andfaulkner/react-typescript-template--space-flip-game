@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as $ from 'jquery';
-import {Coordinates, PlayerColor, Dimension, Direction, Input, actions, PlayerVector} from '../../types/types.tsx';
+import {Coordinates, PlayerColor, Dimension, Direction, Input, actions, UIEntityVector} from '../../types/types.tsx';
 import {Cannon} from '../Cannon/Cannon';
 
 import { connect } from "react-redux";
@@ -59,7 +59,7 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
    * Ensure player sprite is in bounds on the given dimension
    */
   checkInBounds_1D = (position: number, dimen: Dimension,
-                      state: PlayerVector | PlayerState): number => {
+                      state: UIEntityVector | PlayerState): number => {
     if (position >= 300) {
       return 300;
     }
@@ -87,7 +87,7 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
   /**
    * Respond to keyboard to change player sprite's position
    */
-  move = ({ xPos, yPos, speed }: PlayerVector, key: string, action: string = ""): void => {
+  move = ({ xPos, yPos, speed }: UIEntityVector, key: string, action: string = ""): void => {
     console.log(`${key} pressed`);
     let yPosNew: number = yPos + (action.match(/Up/g) ? speed :
                                  (action.match(/Down/g) ? -1 * speed : 0));

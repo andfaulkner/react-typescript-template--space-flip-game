@@ -1,9 +1,11 @@
+/// <reference path="../../typings/index.d.ts" />
+
 import {
-  PlayerUIData,
+  UIEntityProps,
   Direction,
   InputType,
   Coordinates,
-  PlayerVector,
+  UIEntityVector,
   Dimension,
   InputEvent
 } from '../types/types';
@@ -11,6 +13,10 @@ import {
 import {
   PlayerState
 } from '../components/Player/Player.tsx';
+
+import {
+  calculateNextTickPosition
+} from './calculateNextTickPosition';
 
 //
 // DETERMINE ANGLE SPRITE SHOULD BE FACING
@@ -27,11 +33,11 @@ const rotate = (angle: number, keyName: string) => {
  * Ensure player sprite is in bounds on the given dimension
  */
 const checkInBounds_1D = (direction: string, position: number, dimension: string = 'x'): number => {
+  console.log('resolvePlayerMovement#checkInBounds_1D: direction:', direction, 'dimension:', dimension);
+
   let hasVertical = _.includes(direction, 'Up') || _.includes(direction, 'Down');
   let hasHorizontal = _.includes(direction, 'Left') || _.includes(direction, 'Right');
-  console.log('direction:', direction);
-  console.log('dimension:', dimension);
-  console.log('hasVertical?', hasVertical, '; hasHorizontal? ', hasHorizontal);
+
   if (hasHorizontal && hasVertical) {
     if (position >= 300) {
       return 300;
@@ -63,60 +69,19 @@ const checkInBounds_1D = (direction: string, position: number, dimension: string
 //
 // DETERMINE NEW POSITION OF SPRITE, BASED ON DIRECTION GIVEN
 //
-export const resolvePosition = ({ xPos, yPos, speed, angle }: PlayerUIData, direction: Direction): PlayerUIData => {
-  console.log('resolveMovement#resolvePosition: direction', direction);
+export const resolvePosition = (uiObject: UIEntityProps, direction: Direction): UIEntityProps => {
+  let { xPos, yPos, speed, angle } = uiObject;
 
   let hypoteneuse = (speed / 1.4142);
-  let positionObject = { speed, angle: rotate(angle, direction.toString()) };
+  let positionObject = { speed, angle: rotate(angle, direction.toString()), xPos, yPos };
   const boundCheck = _.partial(checkInBounds_1D, direction.toString());
 
-  switch (direction.toString()) {
-    case "Up":
-      return Object.assign(positionObject, {
-        xPos: boundCheck(xPos),
-        yPos: boundCheck(yPos + speed)
-      });
-    case "UpLeft":
-      return Object.assign(positionObject, {
-        xPos: boundCheck(xPos + (speed / 1.4142)),
-        yPos: boundCheck(yPos + (speed / 1.4142)),
-      });
-    case "Left":
-      return Object.assign(positionObject, {
-        xPos: boundCheck(xPos + speed),
-        yPos: boundCheck(yPos)
-      });
-    case "DownLeft":
-      return Object.assign(positionObject, {
-        xPos: boundCheck(xPos + hypoteneuse),
-        yPos: boundCheck(yPos - hypoteneuse),
-        angle: rotate(angle, "DownLeft"),
-        speed
-      });
-    case "Down":
-      return Object.assign(positionObject, {
-        xPos: boundCheck(xPos),
-        yPos: boundCheck(yPos - speed),
-      });
-    case "DownRight":
-      return Object.assign(positionObject, {
-        xPos: boundCheck(xPos - hypoteneuse),
-        yPos: boundCheck(yPos - hypoteneuse),
-      });
-    case "Right":
-      return Object.assign(positionObject, {
-        xPos: boundCheck(xPos - speed),
-        yPos: boundCheck(yPos)
-      });
-    case "UpRight":
-      return Object.assign(positionObject, {
-        xPos: boundCheck(xPos - (speed / 1.4142)),
-        yPos: boundCheck(yPos + (speed / 1.4142))
-      });
-    default:
-      console.log('ERROR: resolveMovement#resolvePosition: other value');
-      return Object.assign(positionObject, { xPos, yPos });
-  }
+  positionObject = calculateNextTickPosition(direction, positionObject);
+
+  return Object.assign({}, positionObject, {
+    xPos: boundCheck(positionObject.xPos),
+    yPos: boundCheck(positionObject.yPos)
+  });
 };
 
 /**
@@ -126,8 +91,6 @@ export const resolvePosition = ({ xPos, yPos, speed, angle }: PlayerUIData, dire
  * @return {integer} updated speed
  */
 export const resolveSpeed = (speed: number, keyPressed: string): number => {
-  console.log('resolveMovement#resolveSpeed: keyPressed: ', keyPressed);
-
   switch (keyPressed) {
     case "RaiseSpeed":
       return (speed < 10) ? speed + 1 : speed;

@@ -51,12 +51,8 @@ export interface Coordinates {
   yPos: number;
 }
 
-export interface PlayerVector extends Coordinates {
+export interface UIEntityVector extends Coordinates {
   speed: number;
-}
-
-export interface PlayerUIData extends PlayerVector {
-  angle: number;
 }
 
 export enum InputType {
@@ -70,6 +66,6 @@ export interface InputEvent {
   data: any;
 }
 
-export interface BulletProps extends PlayerVector {
-  angle?: number;
+export interface UIEntityProps extends UIEntityVector {
+  angle: number;
 }

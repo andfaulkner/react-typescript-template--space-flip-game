@@ -12,7 +12,7 @@ import { mount, shallow } from 'enzyme';
 import { expect } from 'chai';
 
 import { Player, PlayerState, PlayerProps } from '../../app/components/Player/Player';
-import { PlayerColor, Dimension, PlayerVector, Input } from '../../app/types/types';
+import { PlayerColor, Dimension, UIEntityVector, Input } from '../../app/types/types';
 
 describe('<Player />', () => {
 
@@ -45,7 +45,7 @@ describe('<Player />', () => {
 
   describe('#checkInBounds_1D', () => {
     it('should return 300 if passed a position greater than or equal to 300', () => {
-      let mockState: PlayerVector = {xPos: 400, yPos: 400, speed: 5};
+      let mockState: UIEntityVector = {xPos: 400, yPos: 400, speed: 5};
       // let result: number = playerComponent.checkInBounds_1D(400, Dimension.width, playerMock.state);
     });
   });

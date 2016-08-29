@@ -1,10 +1,10 @@
 /// <reference path="../../typings/index.d.ts" />
 
-import { Direction, BulletProps } from '../types/types';
+import { Direction, UIEntityProps } from '../types/types';
 
 import * as _ from "lodash";
 
-export const createBullet = (playerState, bullets: BulletProps[]): BulletProps[] => {
+export const createBullet = (playerState, bullets: UIEntityProps[]): UIEntityProps[] => {
     let newBullet = { speed: 10, angle: playerState.angle };
     switch (playerState.angle) {
       case Direction.Up:

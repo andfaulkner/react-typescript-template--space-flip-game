@@ -45,7 +45,7 @@ export interface Coordinates {
   yPos: number;
 }
 
-export interface PlayerVector {
+export interface UIEntityVector {
   xPos: number;
   yPos: number;
   speed: number;
