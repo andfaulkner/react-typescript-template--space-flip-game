@@ -44,72 +44,51 @@ export interface PlayerProps {
   color: PlayerColor;
 }
 
-export class Player extends React.Component<PlayerProps, PlayerState> {
 
-  state = {
-    xPos: 0,
-    yPos: 0,
-    angle: 225,
-    speed: 3
+// function testDecorator(target) {
+//   // function buildDecoratedTarget(targetToDecorate) {
+//   //   return class Decorated {
+//   //      constructor() {
+//   //        super();
+//   //        console.log('built!');
+//   //      }
+//   //   };
+//   // }
+//   target.prototype.testValue = "test success!";
+//   target.testValue = "test success!";
+//   // target.constructor = _.partialRight(target.constructor,
+//   //                                   { testValue: '!!! test success !!!!!!!'});
+//   target.constructor.testValue = "test success!";
+//   console.log('decorated!');
+//   console.log(target);
+// }
+
+
+// class TestMixin {
+//   testMethodOnTestMixin() {
+//     console.log('TestMixin#testMethodOnTestMixin entered!');
+//   }
+// }
+// console.log('this.testMethodOnTestMixin', this.testMethodOnTestMixin());
+
+const testDecorator = (target: Function) => {
+  const testMethod = () => 'successfully mixed testMethod into component';
+  target.prototype.testMethod = testMethod;
+};
+
+interface TestDecorated {
+  testMethod: () => any;
+}
+
+@testDecorator
+export class Player extends React.Component<PlayerProps, PlayerState> implements TestDecorated {
+
+  testMethod;
+
+  constructor() {
+    super();
+    console.log(this);
   };
-
-  // componentDidMount = (): void => {
-  //   document.onkeydown = this.events.keypress;
-  // }
-
-  /**
-   * Ensure player sprite is in bounds on the given dimension
-   */
-  checkInBounds_1D = (position: number, dimen: Dimension,
-                      state: PlayerVector | PlayerState): number => {
-    if (position >= 300) {
-      return 300;
-    }
-    if (position - this.props[Dimension[dimen].toString()] <= -300) {
-      return -300 + this.props[Dimension[dimen].toString()];
-    }
-    return position;
-  }
-
-  /**
-   * Ensure player sprite remains in bounds on all dimensions
-   */
-  keepInBounds = (xPos: number, yPos: number): Coordinates => (
-    {
-      xPos: this.checkInBounds_1D(xPos, Dimension.width, this.props),
-      yPos: this.checkInBounds_1D(yPos, Dimension.width, this.props)
-    });
-
-  /**
-   * Reduce or increase player sprite speed (i.e. in response to keypresses)
-   */
-  adjustSpeed = (action, speed): number => speed + (action === "RaiseSpeed" ? 1 :
-                                                    (action === "LowerSpeed" ? -1 : 0));
-
-  /**
-   * Respond to keyboard to change player sprite's position
-   */
-  move = ({ xPos, yPos, speed }: PlayerVector, key: string, action: string = ""): void => {
-    console.log(`${key} pressed`);
-    let yPosNew: number = yPos + (action.match(/Up/g) ? speed :
-                                 (action.match(/Down/g) ? -1 * speed : 0));
-    let xPosNew: number = xPos + (action.match(/Left/g) ? speed :
-                                 (action.match(/Right/g) ? -1 * speed : 0));
-    console.log('Player.tsx:: move: xPosNew: ', xPosNew, '; yPosNew: ', yPosNew);
-
-    this.setState(Object.assign({}, this.props,
-                                this.keepInBounds(xPosNew, yPosNew),
-                                {speed: this.adjustSpeed(action, speed),
-                                 angle: this.rotate(action)}));
-  };
-
-  rotate = (keyName: string) => {
-    console.log('Player#rotate: keyName', keyName);
-    let currentDirection: Direction = Direction[keyName];
-    console.log('Player.jsx: rotate: currentDirection', currentDirection);
-    /*downR:0 |down:45 |downL:90 |L:135 |upL:180 |up:225 |upR:270 |R:315*/
-    return currentDirection || this.props.angle;
-  }
 
   /**
   * Determine how much the ship should move
@@ -121,7 +100,8 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
     });
 
   render() {
-    console.log('Player.tsx:: RE-RENDERED!');
+    console.log('Player.tsx:: re-rendered. this: ', this);
+    console.log('this.testMethod', this.testMethod());
     return (
       <div>
         <div className="centered" id="player" style={

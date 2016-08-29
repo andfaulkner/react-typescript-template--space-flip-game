@@ -21,6 +21,12 @@ export enum Direction {
   Right =     315
 };
 
+export enum SpeedChange {
+  Accelerate,
+  Decelerate,
+  Stop
+}
+
 export interface Input {
   time: number;
 }
@@ -49,4 +55,21 @@ export interface PlayerVector {
   xPos: number;
   yPos: number;
   speed: number;
+}
+
+export interface PlayerUIData {
+  xPos: number;
+  yPos: number;
+  angle: number;
+  speed: number;
+}
+
+export enum InputType {
+  PlayerMove,
+  PlayerSpeedChange
+}
+
+export interface InputEvent {
+  type: InputType;
+  data: any;
 }
