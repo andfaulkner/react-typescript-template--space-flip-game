@@ -14,7 +14,7 @@ import { ArenaBorder } from './components/ArenaBorder/ArenaBorder';
 import { Bullet } from './components/Bullet/Bullet.tsx';
 import { KeyController } from './components/KeyController/KeyController';
 import { Clock } from './components/Clock/Clock';
-import { Enemy } from './components/Enemy/Enemy';
+import { BoxUIEntity } from './components/BoxUIEntity/BoxUIEntity.tsx';
 import { CurrentScore } from './components/CurrentScore/CurrentScore';
 
 import {
@@ -126,10 +126,10 @@ class App extends React.Component<AppProps, AppState> {
               {...bullet}
             />
           )}
-          {_.map(this.state.enemies, (enemy, index) =>
-            <Enemy
+          {_.map(this.state.enemies, (uiBox, index) =>
+            <BoxUIEntity
               key={index}
-              {...enemy}
+              {...uiBox}
             />
           )}
           <ArenaBorder />
@@ -184,10 +184,10 @@ class App extends React.Component<AppProps, AppState> {
   /**
    * Randomly generate enemies.
    */
-  updateEnemyGeneration = (curState, enemies, odds: number = 40) => {
-    // create enemy at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
+  updateBoxUIEntityGeneration = (curState, enemies, odds: number = 40) => {
+    // create uiBox at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
     if ((enemies.length <= 10) && (_.random(0, 20) === 20)) {
-      console.log('app.tsx:: updateEnemyGeneration: enemy created!');
+      console.log('app.tsx:: updateBoxUIEntityGeneration: uiBox created!');
       const genPositions = () => {
         let xLeft = _.random(-260, 260);
         let yTop = _.random(-260, 260);
@@ -230,17 +230,17 @@ class App extends React.Component<AppProps, AppState> {
     return { set1, set2 };
   };
 
-  bulletEnemyCollisions = (curState: AppState) => {
-    const enemyWidth = 25;
+  bulletBoxUIEntityCollisions = (curState: AppState) => {
+    const uiBoxWidth = 25;
     const bulletWidth = 7;
     // start naive
-    curState.enemies = _.filter(curState.enemies, (enemy) => {
+    curState.enemies = _.filter(curState.enemies, (uiBox) => {
       return _.every(curState.bullets, (bullet, index) => {
-        if ((bullet.xLeft < enemy.xLeft + enemyWidth - bulletWidth) &&
-            (bullet.xLeft + bulletWidth > enemy.xLeft - enemyWidth) &&
-            (bullet.yTop < enemy.yTop + enemyWidth - bulletWidth) &&
-            (bullet.yTop + bulletWidth > enemy.yTop - enemyWidth)) {
-          console.log('app.tsx:: bulletEnemyCollisions COLLISION!');
+        if ((bullet.xLeft < uiBox.xLeft + uiBoxWidth - bulletWidth) &&
+            (bullet.xLeft + bulletWidth > uiBox.xLeft - uiBoxWidth) &&
+            (bullet.yTop < uiBox.yTop + uiBoxWidth - bulletWidth) &&
+            (bullet.yTop + bulletWidth > uiBox.yTop - uiBoxWidth)) {
+          console.log('app.tsx:: bulletBoxUIEntityCollisions COLLISION!');
           _.pull(curState.bullets, bullet);
           return false;
         } else {
@@ -252,12 +252,12 @@ class App extends React.Component<AppProps, AppState> {
   };
 
   /**
-   * Handle UI changes that occur without input from the user (e.g. bullet and enemy movement)
+   * Handle UI changes that occur without input from the user (e.g. bullet and uiBox movement)
    */
   handleUpdates = (curState) => {
     curState.bullets = updateBulletPositions(curState.bullets);
-    curState.enemies = this.updateEnemyGeneration(curState, curState.enemies);
-    curState = this.bulletEnemyCollisions(curState);
+    curState.enemies = this.updateBoxUIEntityGeneration(curState, curState.enemies);
+    curState = this.bulletBoxUIEntityCollisions(curState);
     return curState;
   };
 

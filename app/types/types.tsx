@@ -73,6 +73,7 @@ export interface InputEvent {
 
 export interface UIEntityProps extends UIEntityVector {
   angle: number;
+  timeCreated?: number;
 }
 
 export interface UIEntityBoxProps {
@@ -82,4 +83,5 @@ export interface UIEntityBoxProps {
   yBottom: number;
   speed: number;
   angle: number;
+  timeCreated?: number;
 }

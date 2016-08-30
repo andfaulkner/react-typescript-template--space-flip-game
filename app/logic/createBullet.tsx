@@ -60,3 +60,4 @@ export const createBullet = (playerState, bullets: UIEntityProps[]): UIEntityPro
   }
   return bullets;
 };
+

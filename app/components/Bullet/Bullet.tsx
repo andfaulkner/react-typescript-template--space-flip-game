@@ -21,6 +21,7 @@ interface BulletProps {
   angle: number;
   speed: number;
 };
+
 interface BulletState { };
 
 export class Bullet extends UIEntity<BulletProps, { }> {

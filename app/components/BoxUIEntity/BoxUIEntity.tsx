@@ -13,17 +13,17 @@ import {
 
 import { UIEntity } from '../UIEntity/UIEntity';
 
-require('./Enemy.css');
+require('./BoxUIEntity.css');
 
-interface EnemyProps extends UIEntityProps { };
-interface EnemyState { };
+interface BoxUIEntityProps extends UIEntityProps { };
+interface BoxUIEntityState { };
 
 const width = 25;
 
-export class Enemy extends UIEntity<EnemyProps, { }> {
+export class BoxUIEntity extends UIEntity<BoxUIEntityProps, { }> {
   render() {
     return (
-      <div id="enemy"
+      <div id="box-ui-entity"
         className="diamond"
         style={ this.calcOffset() }
       />

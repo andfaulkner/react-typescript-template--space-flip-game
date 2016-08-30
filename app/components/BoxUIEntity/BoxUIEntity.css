@@ -1,0 +1,33 @@
+$font_size: 5px;
+$largest: 5em;
+$half: calc($largest / 2);
+$two_fifths: calc($largest/2.5);
+$three_tenths: calc($largest * (3/10));
+$one_fifth: calc($two_fifths/2);
+$one_ninth_ish: calc((($largest/10) * 1.1) * 2);
+
+#box-ui-entity.diamond {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: $two_fifths auto;
+  overflow: hidden;
+  font-size: $font_size;
+  text-indent: -999em;
+  border-radius: 1%;
+
+  width: $largest;
+  height: $largest;
+  border: $one_ninth_ish solid rgba(260, 0, 0, 0.65);
+  border-bottom: $one_ninth_ish solid black;
+
+  border-top: $one_ninth_ish solid black;
+  box-shadow:
+    0em            0em      0em     $one_fifth      rgba(0, 0, 0, 0.4),
+    -$half         0.0em    0.0em   -$two_fifths    red,
+    $half          0.0em    0.0em   -$two_fifths    red,
+    $two_fifths    0em      0em     -$one_fifth     black,
+    -$two_fifths   0em      0em     -$one_fifth     black;
+ 
+  animation: spin10 0.5s infinite linear;
+}
