@@ -184,7 +184,7 @@ class App extends React.Component<AppProps, AppState> {
    */
   updateEnemyGeneration = (curState, enemies, odds: number = 40) => {
     // create enemy at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
-    if ((enemies.length <= 10) && (_.random(0, 40) === 40)) {
+    if ((enemies.length <= 10) && (_.random(0, 20) === 20)) {
       console.log('app.tsx:: updateEnemyGeneration: enemy created!');
       const genPositions = () => {
         let xLeft = _.random(-260, 260);
@@ -208,10 +208,10 @@ class App extends React.Component<AppProps, AppState> {
     // start naive
     curState.enemies = _.filter(curState.enemies, (enemy) => {
       return _.every(curState.bullets, (bullet, index) => {
-        if ((bullet.xLeft < enemy.xLeft + enemyWidth - 20) &&
-            (bullet.xLeft + bulletWidth > enemy.xLeft - 20) &&
-            (bullet.yTop < enemy.yTop + enemyWidth - 20) &&
-            (bullet.yTop + bulletWidth > enemy.yTop - 20)) {
+        if ((bullet.xLeft < enemy.xLeft + enemyWidth - bulletWidth) &&
+            (bullet.xLeft + bulletWidth > enemy.xLeft - enemyWidth) &&
+            (bullet.yTop < enemy.yTop + enemyWidth - bulletWidth) &&
+            (bullet.yTop + bulletWidth > enemy.yTop - enemyWidth)) {
           console.log('app.tsx:: detectCollisions COLLISION!');
           _.pull(curState.bullets, bullet);
           return false;
