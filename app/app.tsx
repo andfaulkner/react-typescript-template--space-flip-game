@@ -15,6 +15,7 @@ import { Bullet } from './components/Bullet/Bullet.tsx';
 import { KeyController } from './components/KeyController/KeyController';
 import { Clock } from './components/Clock/Clock';
 import { Enemy } from './components/Enemy/Enemy';
+import { CurrentScore } from './components/CurrentScore/CurrentScore';
 
 import {
   PlayerColor,
@@ -133,6 +134,7 @@ class App extends React.Component<AppProps, AppState> {
           )}
           <ArenaBorder />
           <Clock time={this.state.time} />
+          <CurrentScore />
         </div>
       </Provider>
     );
@@ -202,7 +204,33 @@ class App extends React.Component<AppProps, AppState> {
     return enemies;
   }
 
-  detectCollisions = (curState: AppState) => {
+  detectCollision = (uiItem1: Coordinates, uiItem2: Coordinates, item1Width: number, item2Width: number) => {
+    if ((uiItem2.xLeft < uiItem1.xLeft + item1Width - item2Width) &&
+        (uiItem2.xLeft + item2Width > uiItem1.xLeft - item1Width) &&
+        (uiItem2.yTop < uiItem1.yTop + item1Width - item2Width) &&
+        (uiItem2.yTop + item2Width > uiItem1.yTop - item1Width)) {
+      return true;
+    }
+    return false;
+  };
+
+  destroyCollisions = (set1: Coordinates[], set2: Coordinates[], set1Width: number, set2Width: number) => {
+    // start naive
+    set1 = _.filter(set1, (set1Item) => {
+      return _.every(set2, (set2Item, index) => {
+        if (this.detectCollision(set1Item, set2Item, set1Width, set2Width)) {
+          console.log('app.tsx:: detectCollisions COLLISION!');
+          _.pull(set2, set2Item);
+          return false;
+        } else {
+          return true;
+        }
+      });
+    });
+    return { set1, set2 };
+  };
+
+  bulletEnemyCollisions = (curState: AppState) => {
     const enemyWidth = 25;
     const bulletWidth = 7;
     // start naive
@@ -212,7 +240,7 @@ class App extends React.Component<AppProps, AppState> {
             (bullet.xLeft + bulletWidth > enemy.xLeft - enemyWidth) &&
             (bullet.yTop < enemy.yTop + enemyWidth - bulletWidth) &&
             (bullet.yTop + bulletWidth > enemy.yTop - enemyWidth)) {
-          console.log('app.tsx:: detectCollisions COLLISION!');
+          console.log('app.tsx:: bulletEnemyCollisions COLLISION!');
           _.pull(curState.bullets, bullet);
           return false;
         } else {
@@ -221,7 +249,7 @@ class App extends React.Component<AppProps, AppState> {
       });
     });
     return curState;
-  }
+  };
 
   /**
    * Handle UI changes that occur without input from the user (e.g. bullet and enemy movement)
@@ -229,9 +257,9 @@ class App extends React.Component<AppProps, AppState> {
   handleUpdates = (curState) => {
     curState.bullets = updateBulletPositions(curState.bullets);
     curState.enemies = this.updateEnemyGeneration(curState, curState.enemies);
-    curState = this.detectCollisions(curState);
+    curState = this.bulletEnemyCollisions(curState);
     return curState;
-  }
+  };
 
   /**
    * The game loop. Coordinates everything. Changes propagate down the tree every time it ticks.
