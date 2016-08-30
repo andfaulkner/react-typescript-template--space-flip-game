@@ -6,28 +6,25 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { UIEntity } from '../UIEntity/UIEntity';
+
 import {
   UIEntityProps,
   BoxCoordinates
 } from '../../types/types';
 
-import { UIEntity } from '../UIEntity/UIEntity';
+require('./EnemyFighter.css');
 
-require('./BoxUIEntity.css');
+interface EnemyFighterProps extends UIEntityProps { };
+interface EnemyFighterState { };
 
-interface BoxUIEntityProps extends UIEntityProps { };
-interface BoxUIEntityState { };
-
-const width = 25;
-
-export class BoxUIEntity extends UIEntity<BoxUIEntityProps, { }> {
+export class EnemyFighter extends UIEntity<EnemyFighterProps, EnemyFighterState> {
   render() {
     return (
-      <div id="box-ui-entity"
-        className="diamond"
+      <div
+        className='enemyFighter'
         style={ this.calcOffset() }
       />
     );
   }
 };
-
