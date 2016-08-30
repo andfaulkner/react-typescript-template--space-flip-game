@@ -14,8 +14,8 @@ export default handleActions({
   CHANGE_PLAYER_POSITION: (state, action: Action<CHANGE_PLAYER_POSITION>) =>
     _.assign({}, state, {
       player: _.assign({}, state.player, {
-        xPos: action.payload.xPos,
-        yPos: action.payload.yPos
+        xLeft: action.payload.xLeft,
+        yTop: action.payload.yTop
       })
   })
 }, {});

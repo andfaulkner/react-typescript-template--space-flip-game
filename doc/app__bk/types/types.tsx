@@ -41,12 +41,12 @@ export let actions = {
 };
 
 export interface Coordinates {
-  xPos: number;
-  yPos: number;
+  xLeft: number;
+  yTop: number;
 }
 
 export interface UIEntityVector {
-  xPos: number;
-  yPos: number;
+  xLeft: number;
+  yTop: number;
   speed: number;
 }

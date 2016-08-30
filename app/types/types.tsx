@@ -47,8 +47,13 @@ export let controls = {
 };
 
 export interface Coordinates {
-  xPos: number;
-  yPos: number;
+  xLeft: number;
+  yTop: number;
+}
+
+export interface BoxCoordinates extends Coordinates {
+  xRight: number;
+  yBottom: number;
 }
 
 export interface UIEntityVector extends Coordinates {
@@ -67,5 +72,14 @@ export interface InputEvent {
 }
 
 export interface UIEntityProps extends UIEntityVector {
+  angle: number;
+}
+
+export interface UIEntityBoxProps {
+  xLeft: number;
+  xRight: number;
+  yTop: number;
+  yBottom: number;
+  speed: number;
   angle: number;
 }

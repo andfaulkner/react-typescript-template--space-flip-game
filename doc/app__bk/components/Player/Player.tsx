@@ -19,8 +19,8 @@ require('./Player.css');
 // enum Action { Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft, RaiseSpeed, LowerSpeed }
 
 export interface PlayerState {
-  xPos: number;
-  yPos: number;
+  xLeft: number;
+  yTop: number;
   angle: number;
   speed: number;
 }
@@ -45,8 +45,8 @@ function mapDispatchToProps(dispatch) {
 export class Player extends React.Component<PlayerProps, PlayerState> {
 
   state = {
-    xPos: 0,
-    yPos: 0,
+    xLeft: 0,
+    yTop: 0,
     angle: 225,
     speed: 3
   };
@@ -72,10 +72,10 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
   /**
    * Ensure player sprite remains in bounds on all dimensions
    */
-  keepInBounds = (xPos: number, yPos: number): Coordinates => (
+  keepInBounds = (xLeft: number, yTop: number): Coordinates => (
     {
-      xPos: this.checkInBounds_1D(xPos, Dimension.width, this.state),
-      yPos: this.checkInBounds_1D(yPos, Dimension.width, this.state)
+      xLeft: this.checkInBounds_1D(xLeft, Dimension.width, this.state),
+      yTop: this.checkInBounds_1D(yTop, Dimension.width, this.state)
     });
 
   /**
@@ -87,16 +87,16 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
   /**
    * Respond to keyboard to change player sprite's position
    */
-  move = ({ xPos, yPos, speed }: UIEntityVector, key: string, action: string = ""): void => {
+  move = ({ xLeft, yTop, speed }: UIEntityVector, key: string, action: string = ""): void => {
     console.log(`${key} pressed`);
-    let yPosNew: number = yPos + (action.match(/Up/g) ? speed :
+    let yTopNew: number = yTop + (action.match(/Up/g) ? speed :
                                  (action.match(/Down/g) ? -1 * speed : 0));
-    let xPosNew: number = xPos + (action.match(/Left/g) ? speed :
+    let xLeftNew: number = xLeft + (action.match(/Left/g) ? speed :
                                  (action.match(/Right/g) ? -1 * speed : 0));
-    console.log('Player.tsx:: move: xPosNew: ', xPosNew, '; yPosNew: ', yPosNew);
+    console.log('Player.tsx:: move: xLeftNew: ', xLeftNew, '; yTopNew: ', yTopNew);
 
     this.setState(Object.assign({}, this.state,
-                                this.keepInBounds(xPosNew, yPosNew),
+                                this.keepInBounds(xLeftNew, yTopNew),
                                 {speed: this.adjustSpeed(action, speed),
                                  angle: this.rotate(action)}));
   };
@@ -122,8 +122,8 @@ export class Player extends React.Component<PlayerProps, PlayerState> {
 
   calcOffset = (): {marginTop: string; marginLeft: string} => (
     {
-      marginTop: (-1 * this.state.yPos) + 'px',
-      marginLeft: (-1 * this.state.xPos) + 'px'
+      marginTop: (-1 * this.state.yTop) + 'px',
+      marginLeft: (-1 * this.state.xLeft) + 'px'
     });
 
   render() {

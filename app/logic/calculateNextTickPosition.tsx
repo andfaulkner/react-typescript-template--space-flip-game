@@ -2,37 +2,37 @@
 
 export const calculateNextTickPosition = (direction, positionObject) => {
   console.log('resolvePlayerMovement.tsx:: in positionCalc!');
-  let { xPos, yPos, speed } = positionObject;
+  let { xLeft, yTop, speed } = positionObject;
   let hypoteneuse = speed / 1.4142;
 
   switch (direction.toString()) {
     case "Up":
-      positionObject.yPos = yPos + speed;
+      positionObject.yTop = yTop + speed;
       return positionObject;
     case "UpRight":
-      positionObject.xPos = xPos - hypoteneuse;
-      positionObject.yPos = yPos + hypoteneuse;
+      positionObject.xLeft = xLeft - hypoteneuse;
+      positionObject.yTop = yTop + hypoteneuse;
       return positionObject;
     case "Right":
-      positionObject.xPos = xPos - speed;
+      positionObject.xLeft = xLeft - speed;
       return positionObject;
     case "DownRight":
-      positionObject.xPos = xPos - hypoteneuse;
-      positionObject.yPos = yPos - hypoteneuse;
+      positionObject.xLeft = xLeft - hypoteneuse;
+      positionObject.yTop = yTop - hypoteneuse;
       return positionObject;
     case "Down":
-      positionObject.yPos = yPos - speed;
+      positionObject.yTop = yTop - speed;
       return positionObject;
     case "DownLeft":
-      positionObject.xPos = xPos + hypoteneuse;
-      positionObject.yPos = yPos - hypoteneuse;
+      positionObject.xLeft = xLeft + hypoteneuse;
+      positionObject.yTop = yTop - hypoteneuse;
       return positionObject;
     case "Left":
-      positionObject.xPos = xPos + hypoteneuse;
+      positionObject.xLeft = xLeft + hypoteneuse;
       return positionObject;
     case "UpLeft":
-      positionObject.xPos = xPos + hypoteneuse;
-      positionObject.yPos = yPos + hypoteneuse;
+      positionObject.xLeft = xLeft + hypoteneuse;
+      positionObject.yTop = yTop + hypoteneuse;
       return positionObject;
     default:
       console.log('ERROR: resolveMovement#resolvePosition: other value');

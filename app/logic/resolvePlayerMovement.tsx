@@ -11,10 +11,6 @@ import {
 } from '../types/types';
 
 import {
-  PlayerState
-} from '../components/Player/Player.tsx';
-
-import {
   calculateNextTickPosition
 } from './calculateNextTickPosition';
 
@@ -60,27 +56,27 @@ const checkInBounds_1D = (direction: string, position: number, dimension: string
 // /**
 //  * Ensure player sprite remains in bounds on all dimensions
 //  */
-// const keepInBounds = ([{ xPos, yPos }: {xPos: number, yPos: number}]): Coordinates => (
+// const keepInBounds = ([{ xLeft, yTop }: {xLeft: number, yTop: number}]): Coordinates => (
 //   {
-//     xPos: checkInBounds_1D(xPos),
-//     yPos: checkInBounds_1D(yPos)
+//     xLeft: checkInBounds_1D(xLeft),
+//     yTop: checkInBounds_1D(yTop)
 //   });
 
 //
 // DETERMINE NEW POSITION OF SPRITE, BASED ON DIRECTION GIVEN
 //
 export const resolvePosition = (uiObject: UIEntityProps, direction: Direction): UIEntityProps => {
-  let { xPos, yPos, speed, angle } = uiObject;
+  let { xLeft, yTop, speed, angle } = uiObject;
 
   let hypoteneuse = (speed / 1.4142);
-  let positionObject = { speed, angle: rotate(angle, direction.toString()), xPos, yPos };
+  let positionObject = { speed, angle: rotate(angle, direction.toString()), xLeft, yTop };
   const boundCheck = _.partial(checkInBounds_1D, direction.toString());
 
   positionObject = calculateNextTickPosition(direction, positionObject);
 
   return Object.assign({}, positionObject, {
-    xPos: boundCheck(positionObject.xPos),
-    yPos: boundCheck(positionObject.yPos)
+    xLeft: boundCheck(positionObject.xLeft),
+    yTop: boundCheck(positionObject.yTop)
   });
 };
 

@@ -7,6 +7,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as $ from 'jquery';
 
+import { UIEntity } from '../UIEntity/UIEntity';
+
 import {
   Coordinates,
   PlayerColor,
@@ -14,7 +16,8 @@ import {
   Direction,
   Input,
   controls,
-  UIEntityVector
+  UIEntityVector,
+  BoxCoordinates
 } from '../../types/types.tsx';
 
 import { Cannon } from '../Cannon/Cannon';
@@ -26,77 +29,39 @@ import * as MyActions from "../../actions/changePlayerPosition";
 
 require('./Player.css');
 
-// enum Action { Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft, RaiseSpeed, LowerSpeed }
-
-export interface PlayerState {
-  // xPos: number;
-  // yPos: number;
-  // angle: number;
-  // speed: number;
-}
-
 export interface PlayerProps {
   angle: number;
   speed: number;
-  xPos: number;
-  yPos: number;
+  xLeft: number;
+  yTop: number;
   width: number;
   color: PlayerColor;
 }
 
+const width = 30;
 
-// function testDecorator(target) {
-//   // function buildDecoratedTarget(targetToDecorate) {
-//   //   return class Decorated {
-//   //      constructor() {
-//   //        super();
-//   //        console.log('built!');
-//   //      }
-//   //   };
-//   // }
-//   target.prototype.testValue = "test success!";
-//   target.testValue = "test success!";
-//   // target.constructor = _.partialRight(target.constructor,
-//   //                                   { testValue: '!!! test success !!!!!!!'});
-//   target.constructor.testValue = "test success!";
-//   console.log('decorated!');
-//   console.log(target);
-// }
-
-
-// class TestMixin {
-//   testMethodOnTestMixin() {
-//     console.log('TestMixin#testMethodOnTestMixin entered!');
-//   }
-// }
-// console.log('this.testMethodOnTestMixin', this.testMethodOnTestMixin());
-
-const testDecorator = (target: Function) => {
-  const testMethod = () => 'successfully mixed testMethod into component';
-  target.prototype.testMethod = testMethod;
-};
-
-interface TestDecorated {
-  testMethod: () => any;
-}
-
-@testDecorator
-export class Player extends React.Component<PlayerProps, PlayerState> implements TestDecorated {
-
-  testMethod;
+export class Player extends UIEntity<PlayerProps, { }> {
 
   /**
   * Convert numeric position to px value for css - determines how much the ship should move
   */
   calcOffset = (): {marginTop: string; marginLeft: string} => (
     {
-      marginTop: (-1 * this.props.yPos) + 'px',
-      marginLeft: (-1 * this.props.xPos) + 'px'
+      marginTop: (-1 * this.props.yTop) + 'px',
+      marginLeft: (-1 * this.props.xLeft) + 'px'
     });
 
+  /**
+   * Get the active zone
+   */
+  box = () : BoxCoordinates => ({
+    xLeft: this.props.xLeft,
+    xRight: this.props.xLeft - width,
+    yTop: this.props.yTop,
+    yBottom: this.props.yTop - width
+  })
+
   render() {
-    // console.log('Player.tsx:: re-rendered. this: ', this);
-    // console.log('this.testMethod', this.testMethod());
     return (
       <div>
         <div className="centered" id="player" style={

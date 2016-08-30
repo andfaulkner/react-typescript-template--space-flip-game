@@ -14,6 +14,6 @@ const moveBullets = (bullets: UIEntityProps[]): UIEntityProps[] => {
 export const updateBulletPositions = (bullets: UIEntityProps[]) => {
   bullets = moveBullets(bullets);
   bullets = _.filter(bullets, (bullet) =>
-    (bullet.xPos < 310 && bullet.xPos > -283 && bullet.yPos < 290 && bullet.yPos > -303));
+    (bullet.xLeft < 310 && bullet.xLeft > -283 && bullet.yTop < 290 && bullet.yTop > -303));
   return bullets;
 };

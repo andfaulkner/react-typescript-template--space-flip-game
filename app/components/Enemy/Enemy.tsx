@@ -2,29 +2,30 @@
 
 declare function require(name: string);
 
-import {UIEntityProps} from '../../types/types';
-
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+
+import {
+  UIEntityProps,
+  BoxCoordinates
+} from '../../types/types';
+
+import { UIEntity } from '../UIEntity/UIEntity';
 
 require('./Enemy.css');
 
 interface EnemyProps extends UIEntityProps { };
 interface EnemyState { };
 
-export class Enemy extends React.Component<EnemyProps, EnemyState> {
-  calcOffset = (): {marginTop: string; marginLeft: string} => (
-    {
-      marginTop: ((-1 * this.props.yPos)) + 'px',
-      marginLeft: ((-1 * this.props.xPos)) + 'px'
-    });
+const width = 25;
 
+export class Enemy extends UIEntity<EnemyProps, { }> {
   render() {
     return (
       <div id="enemy"
         className="diamond"
-        style={ Object.assign({}, this.calcOffset()) }
+        style={ this.calcOffset() }
       />
     );
   }

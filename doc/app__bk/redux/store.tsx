@@ -15,7 +15,7 @@ import changePlayerPositionReducer from './reducers/changePlayerPosition';
 // export const SHOOT_GUN = 'SHOOT_GUN';
 
 // // ACTION CREATORS
-// // export let changePosition = (xPos: number, yPos: number) => ({ type: 'CHANGE_POSITION', xPos, yPos });
+// // export let changePosition = (xLeft: number, yTop: number) => ({ type: 'CHANGE_POSITION', xLeft, yTop });
 // export let changeDirection = (direction: Direction) =>      ({ type: 'CHANGE_DIRECTION', direction });
 // export let changeSpeed = (speed: number) =>                 ({ type: 'CHANGE_SPEED', speed });
 
@@ -27,8 +27,8 @@ import changePlayerPositionReducer from './reducers/changePlayerPosition';
 // // DEFAULT STATE
 // let initialState: State = {
 //   player: {
-//     xPos: 0,
-//     yPos: 0,
+//     xLeft: 0,
+//     yTop: 0,
 //     angle: 225,
 //     speed: 3
 //   }
@@ -43,8 +43,8 @@ import changePlayerPositionReducer from './reducers/changePlayerPosition';
 //     case "CHANGE_POSITION":
 //       return Object.assign({}, state, {
 //         player: Object.assign({}, state.player, {
-//           xPos: action.payload.xPos,
-//           yPos: action.payload.yPos
+//           xLeft: action.payload.xLeft,
+//           yTop: action.payload.yTop
 //         })
 //       });
 //     case "CHANGE_DIRECTION":

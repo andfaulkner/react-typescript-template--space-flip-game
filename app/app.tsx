@@ -7,7 +7,6 @@ import { Button } from 'react-bootstrap';
 
 import {
   Player,
-  PlayerState,
   PlayerProps
 } from './components/Player/Player.tsx';
 
@@ -78,8 +77,8 @@ class App extends React.Component<AppProps, AppState> {
   state: AppState = {
     time: Date.now(),
     player: {
-      xPos: 0,
-      yPos: 0,
+      xLeft: 0,
+      yTop: 0,
       angle: 225,
       speed: 3
     },
@@ -188,19 +187,40 @@ class App extends React.Component<AppProps, AppState> {
     if ((enemies.length <= 10) && (_.random(0, 40) === 40)) {
       console.log('app.tsx:: updateEnemyGeneration: enemy created!');
       const genPositions = () => {
-        let xPos = _.random(-260, 260);
-        let yPos = _.random(-260, 260);
-        if (Math.abs(curState.player.xPos - xPos) < 15) {
-          return (Math.abs(curState.player.yPos - yPos) > 30) ? { xPos, yPos } : genPositions();
-        } else if (Math.abs(curState.player.yPos - yPos) < 15) {
-          return (Math.abs(curState.player.xPos - xPos) > 30) ? { xPos, yPos } : genPositions();
+        let xLeft = _.random(-260, 260);
+        let yTop = _.random(-260, 260);
+        if (Math.abs(curState.player.xLeft - xLeft) < 15) {
+          return (Math.abs(curState.player.yTop - yTop) > 30) ? { xLeft, yTop } : genPositions();
+        } else if (Math.abs(curState.player.yTop - yTop) < 15) {
+          return (Math.abs(curState.player.xLeft - xLeft) > 30) ? { xLeft, yTop } : genPositions();
         } else {
-          return { xPos, yPos };
+          return { xLeft, yTop };
         }
       };
       enemies.push(Object.assign({}, genPositions(), { speed: 2, angle: Direction.Up }));
     }
     return enemies;
+  }
+
+  detectCollisions = (curState: AppState) => {
+    const enemyWidth = 25;
+    const bulletWidth = 7;
+    // start naive
+    curState.enemies = _.filter(curState.enemies, (enemy) => {
+      return _.every(curState.bullets, (bullet, index) => {
+        if ((bullet.xLeft < enemy.xLeft + enemyWidth - 20) &&
+            (bullet.xLeft + bulletWidth > enemy.xLeft - 20) &&
+            (bullet.yTop < enemy.yTop + enemyWidth - 20) &&
+            (bullet.yTop + bulletWidth > enemy.yTop - 20)) {
+          console.log('app.tsx:: detectCollisions COLLISION!');
+          _.pull(curState.bullets, bullet);
+          return false;
+        } else {
+          return true;
+        }
+      });
+    });
+    return curState;
   }
 
   /**
@@ -209,6 +229,7 @@ class App extends React.Component<AppProps, AppState> {
   handleUpdates = (curState) => {
     curState.bullets = updateBulletPositions(curState.bullets);
     curState.enemies = this.updateEnemyGeneration(curState, curState.enemies);
+    curState = this.detectCollisions(curState);
     return curState;
   }
 
