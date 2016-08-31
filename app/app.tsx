@@ -10,13 +10,11 @@ import {
   PlayerProps
 } from './components/Player/Player.tsx';
 
-import { ArenaBorder } from './components/ArenaBorder/ArenaBorder';
 import { Bullet } from './components/Bullet/Bullet.tsx';
 import { KeyController } from './components/KeyController/KeyController';
-import { Clock } from './components/Clock/Clock';
 import { BoxUIEntity } from './components/BoxUIEntity/BoxUIEntity.tsx';
-import { CurrentScore } from './components/CurrentScore/CurrentScore';
 import { EnemyFighter } from './components/EnemyFighter/EnemyFighter';
+import { HUD } from './components/HUD/HUD';
 
 import {
   PlayerColor,
@@ -40,14 +38,14 @@ import { createUIBox, createEnemy } from './logic/npcFactories.tsx';
 
 import { createBullet } from './logic/createBullet.tsx';
 import { updateBulletPositions } from './logic/resolveBulletMovement.tsx';
-import { handleUIEntityCollisions, bulletToUIEntityCollisions } from './logic/collisionHandler.tsx';
+import { bulletToUIEntityCollisions } from './logic/collisionHandler.tsx';
 import { Provider } from 'react-redux';
 import { store } from './store.tsx'; // only import from here
+
 
 console.log('js loaded');
 
 let inputQueue: InputEvent[] = [];
-
 let lastRender = Date.now();
 
 // INTERFACES
@@ -145,9 +143,7 @@ class App extends React.Component<AppProps, AppState> {
               {...uiBox}
             />
           )}
-          <ArenaBorder />
-          <Clock time={this.state.time} />a
-          <CurrentScore />
+          <HUD score={this.state.score} time={this.state.time} />
         </div>
       </Provider>
     );

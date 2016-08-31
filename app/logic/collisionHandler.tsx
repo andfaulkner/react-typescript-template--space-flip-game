@@ -8,6 +8,7 @@ import {
 
 declare function require(name: string);
 
+
 // export const destroyCollisions = (set1: Coordinates[], set2: Coordinates[], ...widths: number[]) => (
 //   {
 //     set1: _.reject(set1, set1El =>
@@ -17,40 +18,44 @@ declare function require(name: string);
 //   }
 // );
 
-// naive collision detection
-export const handleUIEntityCollisions = (curState: AppState) =>
-  _.assign(curState,
-    {
-      uiBoxes: _.reject(curState.uiBoxes, uiBox =>
-                !_.isEmpty(_.remove(curState.bullets, bullet =>
-                  detectCollision(uiBox, bullet)))),
-      enemies: {
-        fighters: _.reject(curState.enemies.fighters, fighter =>
-                    !_.isEmpty(_.remove(curState.bullets, bullet =>
-                      detectCollision(fighter, bullet))))
-      }
-    }
-);
-
-// naive collision detection
+/**
+ * naive collision detection
+ * TODO replace with robust collision detection
+ */
 export const detectCollision = (npc: UIEntityProps, bullet: UIEntityProps) =>
   ((bullet.xLeft < npc.xLeft + bullet.width) &&
    (bullet.xLeft + bullet.width > npc.xLeft - npc.width) &&
    (bullet.yTop < npc.yTop + bullet.height) &&
    (bullet.yTop > npc.yTop - npc.height));
 
-// detect collisions with bullets
-export const bulletToUIEntityCollisions = (curState: AppState): AppState => {
-  let newState = Object.assign({}, curState, {
-      uiBoxes: _.reject(curState.uiBoxes, (uiBox: UIEntityProps) =>
-                !_.isEmpty(_.remove(curState.bullets, bullet =>
-                  detectCollision(uiBox, bullet)))),
-      enemies: {
-        fighters: _.reject(curState.enemies.fighters, (fighter: UIEntityProps) =>
-                    !_.isEmpty(_.remove(curState.bullets, bullet =>
-                      detectCollision(fighter, bullet))))
+// temp storage of app state to let bulletCollisionHandler mutate it for bulletToUIEntityCollisions
+let curStateClosure: AppState;
+
+/**
+ * Determine if a bullet struck a specific element; & if it did, rm the bullet from the app state
+ * and return the element array with the struck element removed.
+ */
+const bulletCollisionHandler = (entityArr: UIEntityProps[], { points }) =>
+  _.reject(entityArr, (uiBox: UIEntityProps) =>
+    !_.isEmpty(_.remove(curStateClosure.bullets, (bullet: UIEntityProps) => {
+      if (detectCollision(uiBox, bullet)) {
+        curStateClosure.score = curStateClosure.score + points;
+        return true;
       }
-    });
-  console.log('newState', newState);
-  return newState;
+    })));
+
+/**
+ * Detect collisions with bullets
+ */
+export const bulletToUIEntityCollisions = (curState: AppState): AppState => {
+  curStateClosure = curState;
+  return Object.assign({},
+    curStateClosure,
+    {
+      uiBoxes: bulletCollisionHandler(curStateClosure.uiBoxes, { points: 0 }),
+      enemies: {
+        fighters: bulletCollisionHandler(curStateClosure.enemies.fighters, { points: 1 })
+      }
+    }
+  );
 };
