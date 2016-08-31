@@ -18,11 +18,7 @@ import {
 // DETERMINE ANGLE SPRITE SHOULD BE FACING
 //
 const rotate = (angle: number, keyName: string) => {
-  console.log('resolveMovement#rotate: keyName', keyName);
-  let curDirection: Direction = Direction[keyName];
-  console.log('resolveMovement#rotate: curDirection', curDirection);
-  /*downR:0 |down:45 |downL:90 |L:135 |upL:180 |up:225 |upR:270 |R:315*/
-  return curDirection || angle;
+  return Direction[keyName] || angle;
 };
 
 /**
@@ -66,10 +62,11 @@ const checkInBounds_1D = (direction: string, position: number, dimension: string
 // DETERMINE NEW POSITION OF SPRITE, BASED ON DIRECTION GIVEN
 //
 export const resolvePosition = (uiObject: UIEntityProps, direction: Direction): UIEntityProps => {
-  let { xLeft, yTop, speed, angle } = uiObject;
+  let { xLeft, yTop, speed, angle, width, height } = uiObject;
 
   let hypoteneuse = (speed / 1.4142);
-  let positionObject = { speed, angle: rotate(angle, direction.toString()), xLeft, yTop };
+  let positionObject = {
+    speed, angle: (Direction[direction.toString()] || angle), xLeft, yTop, width, height};
   const boundCheck = _.partial(checkInBounds_1D, direction.toString());
 
   positionObject = calculateNextTickPosition(direction, positionObject);

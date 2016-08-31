@@ -18,7 +18,7 @@ require('./EnemyFighter.css');
 interface EnemyFighterProps extends UIEntityProps { };
 interface EnemyFighterState { };
 
-export class EnemyFighter extends UIEntity<EnemyFighterProps, EnemyFighterState> {
+export class EnemyFighter extends UIEntity<EnemyFighterProps, { }> {
   render() {
     return (
       <div

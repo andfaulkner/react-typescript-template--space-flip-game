@@ -20,6 +20,8 @@ interface BulletProps {
   yTop: number;
   angle: number;
   speed: number;
+  width: number;
+  height: number;
 };
 
 interface BulletState { };

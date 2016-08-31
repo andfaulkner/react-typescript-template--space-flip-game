@@ -11,14 +11,14 @@ export enum PlayerColor {
 };
 
 export enum Direction {
-  DownRight = 360,
-  Down =      45,
-  DownLeft =  90,
-  Left =      135,
-  UpLeft =    180,
-  Up =        225,
-  UpRight =   270,
-  Right =     315
+  Right =     0.0000001, /* AKA 0. Prevents type issue */
+  DownRight = 45,
+  Down =      90,
+  DownLeft =  135,
+  Left =      180,
+  UpLeft =    225,
+  Up =        270,
+  UpRight =   315,
 };
 
 export enum SpeedChange {
@@ -46,20 +46,6 @@ export let controls = {
   ' ': "Shoot",
 };
 
-export interface Coordinates {
-  xLeft: number;
-  yTop: number;
-}
-
-export interface BoxCoordinates extends Coordinates {
-  xRight: number;
-  yBottom: number;
-}
-
-export interface UIEntityVector extends Coordinates {
-  speed: number;
-}
-
 export enum InputType {
   PlayerMove,
   PlayerSpeedChange,
@@ -71,9 +57,29 @@ export interface InputEvent {
   data: any;
 }
 
+
+
+export interface Coordinates {
+  xLeft: number;
+  yTop: number;
+}
+
+export interface UIEntityVector extends Coordinates {
+  speed: number;
+}
+
 export interface UIEntityProps extends UIEntityVector {
   angle: number;
   timeCreated?: number;
+  width: number;
+  height?: number;
+}
+
+
+
+export interface BoxCoordinates extends Coordinates {
+  xRight: number;
+  yBottom: number;
 }
 
 export interface UIEntityBoxProps {
@@ -85,3 +91,13 @@ export interface UIEntityBoxProps {
   angle: number;
   timeCreated?: number;
 }
+
+export interface AppState {
+  time:    number;
+  player:  UIEntityProps;
+  bullets: UIEntityProps[];
+  uiBoxes: UIEntityProps[];
+  enemies: {
+    fighters: UIEntityProps[]
+  };
+};

@@ -28,6 +28,7 @@ import {
   UIEntityProps,
   InputType,
   InputEvent,
+  AppState,
   controls } from './types/types.tsx';
 
 import {
@@ -52,15 +53,6 @@ export interface AppProps {
   spriteSize: number;
 };
 
-export interface AppState {
-  time: number;
-  player: UIEntityProps;
-  bullets: UIEntityProps[];
-  uiBoxes: UIEntityProps[];
-  enemies: {
-    fighters: UIEntityProps[]
-  };
-};
 const uiBoxWidth = 25;
 const fighterWidth = 28;
 const bulletWidth = 7;
@@ -87,8 +79,10 @@ class App extends React.Component<AppProps, AppState> {
     player: {
       xLeft: 0,
       yTop: 0,
-      angle: 225,
-      speed: 3
+      angle: 270,
+      speed: 3,
+      width: 20,
+      height: 20
     },
     bullets: [],
     uiBoxes: [],
@@ -160,7 +154,7 @@ class App extends React.Component<AppProps, AppState> {
    * calculate new positions of all the things
    */
   handleInputQueue = (curState, inputQueue: InputEvent[]) => {
-    console.log('resolveMovement#handleInputQueue: inputQueue', inputQueue);
+    console.log('resolveMove#handleInputQueue: inputQueue', inputQueue);
 
     _.each(inputQueue, (inputEvent: InputEvent) => {
       let inputType = InputType[inputEvent.type];
@@ -171,7 +165,7 @@ class App extends React.Component<AppProps, AppState> {
         curState.player = newPosition;
 
       } else if (inputType === InputType[InputType.PlayerSpeedChange]) {
-        console.log('resolveMovement#handleInputQueue: PlayerSpeedChange');
+        console.log('resolveMove#handleInputQueue: PlayerSpeedChange');
         curState.player.speed = resolveSpeed(curState.player.speed, inputEvent.data.keyPressed);
 
       } else if (inputType === InputType[InputType.PlayerShoot]) {
@@ -179,7 +173,7 @@ class App extends React.Component<AppProps, AppState> {
         curState.bullets = createBullet(curState.player, curState.bullets);
 
       } else {
-        console.log('resolveMovement#handleInputQueue: WTF IS THIS???');
+        console.log('resolveMove#handleInputQueue: WTF IS THIS???');
       }
     });
     return curState;
@@ -197,38 +191,40 @@ class App extends React.Component<AppProps, AppState> {
     return newPositions;
   };
 
-  genPositions = (curState) => {
-    let xLeft = _.random(-260, 260);
-    let yTop = _.random(-260, 260);
+  generateRandomPosition = () => ({ xLeft: _.random(-260, 260), yTop: _.random(-260, 260)});
 
-    if (Math.abs(curState.player.xLeft - xLeft) < 15) {
-      return (Math.abs(curState.player.yTop - yTop) > 30)
-          ? { xLeft, yTop }
-          : this.genPositions(curState);
+  generateEntityStartPosition = (curState) => {
+    let { xLeft: xLeftNew, yTop: yTopNew } = this.generateRandomPosition();
+    let { xLeft: xLeftP, yTop: yTopP, width: widthP, height: heightP } = curState.player;
 
-    } else if (Math.abs(curState.player.yTop - yTop) < 15) {
-      return (Math.abs(curState.player.xLeft - xLeft) > 30)
-          ? { xLeft, yTop }
-          : this.genPositions(curState);
-
-    } else {
-      return { xLeft, yTop };
+    // is there overlap? [TODO: confirm this works]
+    if (((Math.abs(xLeftP - xLeftNew) < widthP) && !(Math.abs(yTopP - yTopNew) > widthP)) ||
+        ((Math.abs(yTopP - yTopNew) < heightP) && !(Math.abs(xLeftP - xLeftNew) > 30))) {
+      return this.generateEntityStartPosition(curState);
     }
+
+    // return new values 
+    return { xLeft: xLeftNew, yTop: yTopNew };
   };
 
-  createUIBox = (curState, uiBoxes) => {
-    uiBoxes.push(Object.assign({}, this.genPositions(curState), { speed: 2, angle: Direction.Up }));
-    return uiBoxes;
-  };
+  /**
+   * Create inert 'Box' UI Entity
+   */
+  createUIBox = (curState) => {
+    curState.uiBoxes.push(_.assign({}, this.generateEntityStartPosition(curState),
+                                   { speed: 2, angle: Direction.Up, width: 25, height: 25 }));
+    return curState.uiBoxes;
+  }
 
+  /**
+   * Createa single 'enemy' UI Entity
+   */
   createEnemy = (curState, enemies, enemyType) => {
     switch (enemyType) {
       case 'fighter':
         console.log('app.tsx:: created fighter!');
-        enemies.fighters.push(Object.assign({},
-          this.genPositions(curState),
-          { speed: 4, angle: Direction.Down }
-        ));
+        curState.enemies.fighters.push(_.assign({}, this.generateEntityStartPosition(curState),
+                                       { speed: 4, angle: Direction.Up, width: 25, height: 25 }));
       break;
       default:
         console.error('app.tsx#createEnemy: Error: this enemy type does not exist');
@@ -240,12 +236,13 @@ class App extends React.Component<AppProps, AppState> {
   /**
    * Randomly generate uiBoxes.
    */
-  updateBoxUIEntityGeneration = (curState, odds: number = 40) => {
+  updateBoxUIEntity = (curState, odds: number = 40) => {
     // create uiBox at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
     if ((curState.uiBoxes.length <= 10) && (_.random(0, 20) === 20)) {
       switch (_.sample(['uiBox', 'enemy.fighter'])) {
         case('uiBox'):
-          curState.uiBoxes = this.createUIBox(curState, curState.uiBoxes);
+          curState.uiBoxes = this.createUIBox(curState);
+          console.log('updateBoxUIEntity: curState.uiBoxes:', curState.uiBoxes);
         case('enemy.fighter'):
           curState.enemies = this.createEnemy(curState, curState.enemies, 'fighter');
 
@@ -254,43 +251,50 @@ class App extends React.Component<AppProps, AppState> {
     return curState;
   }
 
-  detectCollision = ((el1: Coordinates, el2: Coordinates, [el1Width, el2Width]: number[]) =>
-    ((el2.xLeft < el1.xLeft + el1Width - el2Width) &&
-     (el2.xLeft + el2Width > el1.xLeft - el1Width) &&
-     (el2.yTop < el1.yTop + el1Width - el2Width) &&
-     (el2.yTop + el2Width > el1.yTop - el1Width)));
-
-  destroyCollisions = (set1: Coordinates[], set2: Coordinates[], ...widths: number[]) => (
-    {
-      set1: _.reject(set1, set1El =>
-              _.remove(set2, (set2El, i) =>
-                this.detectCollision(set1El, set2El, widths))),
-      set2
-    }
-  );
+  detectCollision = ((el1: UIEntityProps, el2: UIEntityProps) =>
+    ((el2.xLeft < el1.xLeft + el1.width - el2.width) &&
+     (el2.xLeft + el2.width > el1.xLeft - el1.width) &&
+     (el2.yTop < el1.yTop + el1.height - el2.height) &&
+     (el2.yTop + el2.height > el1.yTop - el1.height)));
 
   // naive collision detection
-  bulletBoxUIEntityCollisions = (curState: AppState) =>
-    _.assign(curState,
-      {
-        uiBoxes: _.reject(curState.uiBoxes, uiBox =>
+  bulletToUIEntityCollisions = (curState: AppState) => {
+    let newState = _.defaultsDeep({
+        uiBoxes: _.reject(curState.uiBoxes, (uiBox: UIEntityProps) =>
                   !_.isEmpty(_.remove(curState.bullets, bullet =>
-                    this.detectCollision(uiBox, bullet, [uiBoxWidth, bulletWidth])))),
+                    this.detectCollision(uiBox, bullet)))),
         enemies: {
-          fighters: _.reject(curState.enemies.fighters, fighter =>
+          fighters: _.reject(curState.enemies.fighters, (fighter: UIEntityProps) =>
                       !_.isEmpty(_.remove(curState.bullets, bullet =>
-                        this.detectCollision(fighter, bullet, [fighterWidth, bulletWidth]))))
+                        this.detectCollision(fighter, bullet))))
         }
-      }
-  );
+      }, curState);
+    console.log('app#bulletToUIEntityCollisions: newState', newState);
+    return _.defaultsDeep({}, newState);
+  }
+
+  /**
+   * Generate random movements from enemies
+   * ** ONGOING **
+   */
+  moveNpcs = (curState: AppState) => {
+    let { fighters } = curState.enemies;
+    // console.log('app#moveNpcs: curState.enemies', curState.enemies);
+    // console.log(curState.enemies);
+    curState.enemies.fighters = _.map(fighters, (fighter: UIEntityProps, i: number) => fighter);
+
+    return curState;
+  };
 
   /**
    * Handle UI changes that occur without input from the user (e.g. bullet and uiBox movement)
    */
-  handleUpdates = (curState) => {
+  handleUpdates = (curState: AppState): AppState => {
     curState.bullets = updateBulletPositions(curState.bullets);
-    curState = this.updateBoxUIEntityGeneration(curState);
-    curState = this.bulletBoxUIEntityCollisions(curState);
+    curState = this.moveNpcs(curState);
+    curState = this.updateBoxUIEntity(curState);
+    console.log('app.tsx:: curState on return from updateBoxUIEntity: ', curState);
+    curState = this.bulletToUIEntityCollisions(curState);
     return curState;
   };
 

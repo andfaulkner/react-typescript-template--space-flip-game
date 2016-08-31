@@ -35,6 +35,7 @@ export interface PlayerProps {
   xLeft: number;
   yTop: number;
   width: number;
+  height: number;
   color: PlayerColor;
 }
 
@@ -67,7 +68,7 @@ export class Player extends UIEntity<PlayerProps, { }> {
         <div className="centered" id="player" style={
           Object.assign({},
             this.calcOffset(),
-            {transform: `rotate(${this.props.angle}deg)`})
+            {transform: `rotate(${this.props.angle - 45}deg)`})
         }>
         </div>
       </div>
