@@ -12,8 +12,6 @@ require('./UIEntity.css');
 
 interface UIEntityState { };
 
-const width = 30;
-
 export abstract class UIEntity<S extends UIEntityProps, T> extends React.Component<S, T> {
   calcOffset = (offset: number = 0): {marginTop: string; marginLeft: string} => (
     {
@@ -21,10 +19,10 @@ export abstract class UIEntity<S extends UIEntityProps, T> extends React.Compone
       marginLeft: ((-1 * this.props.xLeft) + offset) + 'px'
     });
 
-  box = () : BoxCoordinates => ({
+  box = (width: number = 30, height: number = 30) : BoxCoordinates => ({
     xLeft: this.props.xLeft,
-    xRight: this.props.xLeft - width,
+    xRight: this.props.xLeft - this.props.width,
     yTop: this.props.yTop,
-    yBottom: this.props.yTop - width
+    yBottom: this.props.yTop - this.props.height
   })
 };

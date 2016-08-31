@@ -18,8 +18,6 @@ require('./BoxUIEntity.css');
 interface BoxUIEntityProps extends UIEntityProps { };
 interface BoxUIEntityState { };
 
-const width = 25;
-
 export class BoxUIEntity extends UIEntity<BoxUIEntityProps, { }> {
   render() {
     return (

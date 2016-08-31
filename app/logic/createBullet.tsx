@@ -5,7 +5,7 @@ import { Direction, UIEntityProps } from '../types/types';
 import * as _ from "lodash";
 
 export const createBullet = (playerState, bullets: UIEntityProps[]): UIEntityProps[] => {
-  let newBullet = { speed: 10, angle: playerState.angle, width: 7, height: 7 };
+  let newBullet = { speed: 1, angle: playerState.angle, width: 7, height: 7 };
   switch (playerState.angle) {
     case Direction.Up:
       bullets.push(_.assign(newBullet, {

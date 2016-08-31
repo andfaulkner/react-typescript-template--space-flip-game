@@ -72,7 +72,7 @@ export interface UIEntityProps extends UIEntityVector {
   angle: number;
   timeCreated?: number;
   width: number;
-  height?: number;
+  height: number;
 }
 
 
@@ -100,4 +100,5 @@ export interface AppState {
   enemies: {
     fighters: UIEntityProps[]
   };
+  score: number;
 };
