@@ -2,11 +2,7 @@
 
 import * as React from "react";
 
-interface HelloProps {
-  name: string;
-}
-
-class Hello extends React.Component<HelloProps, {}> {
+class Hello extends React.Component<{ name: string }, { }> {
   render() {
     return <div>Hello, {this.props.name}</div>;
   }

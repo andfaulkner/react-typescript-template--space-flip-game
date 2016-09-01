@@ -1,3 +1,6 @@
+temp/
+!/*/**/*temp*
+
 node_modules
 build
 cache**

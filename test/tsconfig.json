@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "experimentalDecorators": true,
+        "declaration": true,
+        "target": "es6",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": false,
+        "emitDecoratorMetadata": true,
+        "jsx": "react",
+        "outDir": "../temp/testBuild",
+        "pretty": true
+    }
+}

@@ -3,28 +3,27 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as TestUtils from "react-addons-test-utils";
+import * as chai from 'chai';
 
 import Hello from "../app/Hello";
 
-describe("Hello", function(){
+describe("Hello", () => {
 
     let renderer;
 
-    beforeEach(function() {
+    beforeEach(() => {
         renderer = TestUtils.createRenderer();
         renderer.render(<Hello name="Willson" />);
-    }.bind(this));
+    });
 
-    it("should render correctly", function() {
-        console.log('should render correctly ran!');
+    it("should render correctly", () => {
         const result = renderer.getRenderOutput();
         chai.assert.strictEqual(result.type, "div");
-    }.bind(this));
+    });
 
-    it("should have correct prop values", function() {
-        console.log('should have correct prop values test ran!');
+    it("should have correct prop values", () => {
         const result = renderer.getRenderOutput();
         const propValues = result.props.children.join("");
         chai.assert.strictEqual(propValues, "Hello, Willson");
-    }.bind(this));
-}.bind(this));
+    });
+});
