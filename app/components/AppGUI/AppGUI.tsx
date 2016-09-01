@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { spring, Motion } from 'react-motion';
 
 import { Button } from 'react-bootstrap';
 
@@ -108,7 +109,6 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
       <div onKeyDown = { this.events.keypress.bind(this) }>
         <div className="layout-transparent mdl-layout mdl-js-layout">
           <NavHeader />
-
           <main className="mdl-layout__content">
             <Player
               color={ PlayerColor.Red }
@@ -123,6 +123,12 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
               time={ this.state.time }
             />
           </main>
+          <Motion defaultStyle={{x: 0}} style={{x: spring(360)}}>
+            {interpolatedStyle => {
+              console.log('interpolatedStyle', interpolatedStyle);
+              return (<div style={interpolatedStyle}>{interpolatedStyle.x}</div>);
+            }}
+          </Motion>
         </div>
       </div>
     );
