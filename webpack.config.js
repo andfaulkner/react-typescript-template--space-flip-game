@@ -54,10 +54,11 @@ module.exports = {
     loaders: [
       {
         test: /\.tsx?$/,
-        include: [srcPath],
+        exclude: /node_modules/,
         // exclude: ['node_modules','typings'],
         // loaders: 'react-hot!ts-loader'
         loaders: ['babel', 'ts-loader']
+        // loaders: ['ts-loader', 'babel']
       },
       { test: /\.((hbs)|(handlebars))$/, loader: "handlebars-loader" },
       // {
@@ -88,9 +89,12 @@ module.exports = {
         test: /\.(jpg|png)$/,
         loader: 'url?limit=25000',
         include: path.join(srcPath, 'components')
+      },
+      {
+        test: /\.jsx?$/,
+        loader: 'babel',
+        exclude: /node_modules/
       }
-
-
 
       // {
       //   test: /\.(jpe?g|png|gif|svg)$/i,

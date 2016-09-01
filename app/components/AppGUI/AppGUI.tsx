@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { spring, Motion } from 'react-motion';
+import TransitionGroup from 'react-addons-transition-group';
 
 import { Button } from 'react-bootstrap';
 
@@ -123,12 +123,6 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
               time={ this.state.time }
             />
           </main>
-          <Motion defaultStyle={{x: 0}} style={{x: spring(360)}}>
-            {interpolatedStyle => {
-              console.log('interpolatedStyle', interpolatedStyle);
-              return (<div style={interpolatedStyle}>{interpolatedStyle.x}</div>);
-            }}
-          </Motion>
         </div>
       </div>
     );
