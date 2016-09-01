@@ -68,11 +68,43 @@ module.exports = {
       //     presets: ["react"]
       //   },
       //   loader: 'babel?cacheDirectory=cache'
+      { test: /\.json$/, loader: 'json' },
+      { test: /\.css$/, loader: "style-loader!css-loader!postcss-loader" },
+      // {
+      //   test: /.*\.(gif|png|jpe?g|svg)$/i,
+      //   loaders: [
+      //     'file?hash=sha512&digest=hex&name=[hash].[ext]',
+      //     'image-webpack?{progressive:true, optimizationLevel: 7, interlaced: false, pngquant:{quality: "65-90", speed: 4}}'
+      //   ]
+      // }
+
+      // {
+      //   test: /\.(jpg|png)$/,
+      //   loader: 'file?name=[path][name].[hash].[ext]',
+      //   include:  path.join(srcPath, 'components')
+      // }
+
       {
-        test: /\.json$/,
-        loader: 'json'
-      },
-      { test: /\.css$/, loader: "style-loader!css-loader!postcss-loader" }
+        test: /\.(jpg|png)$/,
+        loader: 'url?limit=25000',
+        include: path.join(srcPath, 'components')
+      }
+
+
+
+      // {
+      //   test: /\.(jpe?g|png|gif|svg)$/i,
+      //   loaders: [
+      //       'file' + 
+      //         '?hash' +   '=' + 'sha512' +
+      //         '&digest' + '=' + 'hex' +
+      //         '&name'   + '=' + '[hash].[ext]',
+      //       'image-webpack' + 
+      //         '?bypassOnDebug' +
+      //         '&optimizationLevel' + '=' + '7' +
+      //         '&interlaced' +        '=' + 'false'
+      //   ]
+      // }
 
       // {
       //   test: /\.css$/,

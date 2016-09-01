@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "outDir": "build",
+        "noImplicitAny": false,
+        "emitDecoratorMetadata": true,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "allowJs": true,
+        "jsx": "preserve",
+        "pretty": true
+    },
+    "exclude": [
+        "node_modules",
+        "docs_guides/build_js",
+        "*.js",
+        "*.json",
+        ".git",
+        ".eslintrc",
+        ".babelrc",
+        ".node-version"
+    ],
+    "filesGlob": [
+        "./typings/browser.d.ts",
+        "./app/**.tsx",
+        "./app/**.ts"
+    ],
+    "files": [
+        "server/server.ts"
+    ]
+}

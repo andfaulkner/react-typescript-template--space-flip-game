@@ -16,7 +16,9 @@ interface CurrentScoreState { };
 export class CurrentScore extends React.Component<CurrentScoreProps, CurrentScoreState> {
   render() {
     return (
-      <div id='currentscore'>Current score: {this.props.score}</div>
+      <div id='currentscore'>
+        Score: {this.props.score}
+      </div>
     );
   }
 };

@@ -2,10 +2,11 @@ div#currentscore {
   position: absolute;
   top: calc(50% - 300px);
   left: calc(50% - 300px);
+  transform: translate(-100%);
   font-weight: bold;
   border: 2.5px dotted darkgray;
   padding: 5px;
-  margin-top: -50px;
+  margin-left: -10px;
   border-radius: 9px;
   background-color: #DFDFDF;
   box-shadow: none;

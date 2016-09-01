@@ -1,0 +1,6 @@
+.layout-transparent .mdl-layout__header,
+.layout-transparent .mdl-layout__drawer-button {
+  /* The bg is fairly dark, so text needs to be white for readability. If you */
+  /* change it back to a lighter bg later on, use 87% black below instead.    */
+  color: white;
+}

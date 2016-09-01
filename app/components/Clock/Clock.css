@@ -1,3 +1,9 @@
 .clock--text {
+  position: absolute;
   font-size: 9px;
+  color: white;
+  margin-left: -1px;
+  top: calc(50% - 300px);
+  left: calc(50% + 300px);
+  transform: translate(-100%, -100%);
 }

@@ -3,3 +3,4 @@ build
 cache**
 *.sublime-workspace
 .bk
+npm-debug.log

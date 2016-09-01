@@ -5,6 +5,7 @@ div.arena.centered {
   width: 600px;
   height: 600px;
   border: 2px solid black;
-  background-color: transparent;
+  background-color: white;
   z-index: -3;
+  box-shadow: 9px 9px 7px 1px black;
 }

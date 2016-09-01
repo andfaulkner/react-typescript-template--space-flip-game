@@ -1,0 +1,10 @@
+div.arena-container {
+  margin-top:-10px;
+  border: 1px solid black;
+  ;
+}
+
+div.topSpacer {
+  position: relative;
+  min-height: 200px;
+}

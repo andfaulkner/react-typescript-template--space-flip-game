@@ -15,6 +15,7 @@ import { KeyController } from './components/KeyController/KeyController';
 import { BoxUIEntity } from './components/BoxUIEntity/BoxUIEntity.tsx';
 import { EnemyFighter } from './components/EnemyFighter/EnemyFighter';
 import { HUD } from './components/HUD/HUD';
+import { NavHeader } from './components/NavHeader/NavHeader.tsx';
 
 import {
   PlayerColor,
@@ -43,7 +44,13 @@ import { Provider } from 'react-redux';
 import { store } from './store.tsx'; // only import from here
 
 
-console.log('js loaded');
+console.log('app base js loaded');
+
+require('./components/app.css');
+console.log('app base css loaded');
+
+require('./components/transparent.jpg');
+console.log('images loaded');
 
 let inputQueue: InputEvent[] = [];
 let lastRender = Date.now();
@@ -120,30 +127,39 @@ class App extends React.Component<AppProps, AppState> {
     return (
       <Provider store={store}>
         <div onKeyDown = { this.events.keypress.bind(this) }>
-          <Player
-            color={ PlayerColor.Red }
-            width={ this.props.spriteSize }
-            {...this.state.player}
-          />
-          {_.map(this.state.bullets, (bullet, index) =>
-            <Bullet
-              key={index}
-              {...bullet}
-            />
-          )}
-          {_.map(this.state.enemies.fighters, (enemyFighter, index) =>
-            <EnemyFighter
-              key={index}
-              {...enemyFighter}
-            />
-          )}
-          {_.map(this.state.uiBoxes, (uiBox, index) =>
-            <BoxUIEntity
-              key={index}
-              {...uiBox}
-            />
-          )}
-          <HUD score={this.state.score} time={this.state.time} />
+          <div className="layout-transparent mdl-layout mdl-js-layout">
+            <NavHeader />
+
+            <main className="mdl-layout__content">
+              <Player
+                color={ PlayerColor.Red }
+                width={ this.props.spriteSize }
+                {...this.state.player}
+              />
+              {_.map(this.state.bullets, (bullet, index) =>
+                <Bullet
+                  key={index}
+                  {...bullet}
+                />
+              )}
+              {_.map(this.state.enemies.fighters, (enemyFighter, index) =>
+                <EnemyFighter
+                  key={index}
+                  {...enemyFighter}
+                />
+              )}
+              {_.map(this.state.uiBoxes, (uiBox, index) =>
+                <BoxUIEntity
+                  key={index}
+                  {...uiBox}
+                />
+              )}
+              <HUD
+                score={this.state.score}
+                time={this.state.time}
+              />
+            </main>
+          </div>
         </div>
       </Provider>
     );

@@ -7,6 +7,7 @@
     "chai": "registry:dt/chai#3.4.0+20160601211834",
     "enzyme": "registry:dt/enzyme#2.4.1+20160709041153",
     "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
+    "express": "registry:dt/express#4.0.0+20160708185218",
     "jquery": "registry:dt/jquery#1.10.0+20160704162008",
     "jsdom": "registry:dt/jsdom#2.0.0+20160316155526",
     "lodash": "registry:dt/lodash#4.14.0+20160817155621",
