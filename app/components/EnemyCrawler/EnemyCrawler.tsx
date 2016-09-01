@@ -10,19 +10,19 @@ import { UIEntity } from '../UIEntity/UIEntity';
 
 import {
   UIEntityProps,
-  BoxCoordinates
+  BoxCoordinates,
+  EnemyCrawlerProps
 } from '../../types/types';
 
-require('./EnemyFighter.css');
+require('./EnemyCrawler.css');
 
-interface EnemyFighterProps extends UIEntityProps { };
-interface EnemyFighterState { };
+interface EnemyCrawlerState { };
 
-export class EnemyFighter extends UIEntity<EnemyFighterProps, { }> {
+export class EnemyCrawler extends UIEntity<EnemyCrawlerProps, { }> {
   render() {
     return (
       <div
-        className='enemyFighter'
+        className='enemyCrawler'
         style={ this.calcOffset() }
       />
     );

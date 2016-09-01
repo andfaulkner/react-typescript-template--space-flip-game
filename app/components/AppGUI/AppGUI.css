@@ -1,0 +1,5 @@
+.layout-transparent {
+  background: url('../blue_sky.jpg') center / cover; /* TODO REFACTOR THIS, IT NEEDS TO BE A COMPONENT */
+  max-height: 1500px;
+  overflow-y: scroll
+}

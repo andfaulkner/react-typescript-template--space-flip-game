@@ -2,13 +2,16 @@
 
 import * as _ from 'lodash';
 
-import { Direction } from '../types/types';
+import { Direction, AppState } from '../types/types';
 
 declare function require(name: string);
 
 const generateRandomPosition = () => ({ xLeft: _.random(-260, 260), yTop: _.random(-260, 260)});
 
-const generateEntityStartPosition = (curState) => {
+/**
+ * Determine when to place new Entity
+ */
+const generateEntityStartPosition = (curState: AppState) => {
   let { xLeft: xLeftNew, yTop: yTopNew } = generateRandomPosition();
   let { xLeft: xLeftP, yTop: yTopP, width: widthP, height: heightP } = curState.player;
 
@@ -17,7 +20,6 @@ const generateEntityStartPosition = (curState) => {
       ((Math.abs(yTopP - yTopNew) < heightP) && !(Math.abs(xLeftP - xLeftNew) > 30))) {
     return generateEntityStartPosition(curState);
   }
-  // return new values
   return { xLeft: xLeftNew, yTop: yTopNew };
 };
 
@@ -35,9 +37,9 @@ export const createUIBox = (curState) => {
  */
 export const createEnemy = (curState, enemies, enemyType) => {
   switch (enemyType) {
-    case 'fighter':
-      console.log('app.tsx:: created fighter!');
-      curState.enemies.fighters.push(_.assign({}, generateEntityStartPosition(curState),
+    case 'crawler':
+      console.log('app.tsx:: created crawler!');
+      curState.enemies.crawlers.push(_.assign({}, generateEntityStartPosition(curState),
                                      { speed: 4, angle: Direction.Up, width: 13, height: 25 }));
     break;
     default:

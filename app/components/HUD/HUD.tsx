@@ -16,7 +16,15 @@ interface HUDProps {
   time: number;
   score: number;
 };
+
 interface HUDState { };
+
+const ArenaContainer = ({score}) => (
+  <div className="arena-container">
+    <CurrentScore score={score}/>
+    <ArenaBorder />
+  </div>
+);
 
 export class HUD extends React.Component<HUDProps, HUDState> {
   render() {
@@ -24,10 +32,7 @@ export class HUD extends React.Component<HUDProps, HUDState> {
       <div>
         <div className='top-spacer' />
         <Clock time={this.props.time} />a
-        <div className="arena-container">
-          <CurrentScore score={this.props.score}/>
-          <ArenaBorder />
-        </div>
+        <ArenaContainer score={this.props.score} />
       </div>
     );
   }

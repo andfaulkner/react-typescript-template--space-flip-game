@@ -25,7 +25,7 @@ process.env.BABEL_ENV = TARGET;
 module.exports = {
   // context: path.join(__dirname, "app"),
   entry: [
-    srcFilePath('app.tsx')
+    srcFilePath('root.tsx')
   ],
 
   output: {

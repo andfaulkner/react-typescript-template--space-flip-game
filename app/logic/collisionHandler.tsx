@@ -54,7 +54,7 @@ export const bulletToUIEntityCollisions = (curState: AppState): AppState => {
     {
       uiBoxes: bulletCollisionHandler(curStateClosure.uiBoxes, { points: 0 }),
       enemies: {
-        fighters: bulletCollisionHandler(curStateClosure.enemies.fighters, { points: 1 })
+        crawlers: bulletCollisionHandler(curStateClosure.enemies.crawlers, { points: 1 })
       }
     }
   );

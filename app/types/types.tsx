@@ -92,13 +92,17 @@ export interface UIEntityBoxProps {
   timeCreated?: number;
 }
 
+export interface EnemyCrawlerProps extends UIEntityProps {
+  reachedEnd: boolean;
+};
+
 export interface AppState {
   time:    number;
   player:  UIEntityProps;
   bullets: UIEntityProps[];
   uiBoxes: UIEntityProps[];
   enemies: {
-    fighters: UIEntityProps[]
+    crawlers: EnemyCrawlerProps[]
   };
   score: number;
 };

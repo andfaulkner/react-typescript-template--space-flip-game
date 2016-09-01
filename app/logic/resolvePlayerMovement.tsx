@@ -49,24 +49,16 @@ const checkInBounds_1D = (direction: string, position: number, dimension: string
   }
 };
 
-// /**
-//  * Ensure player sprite remains in bounds on all dimensions
-//  */
-// const keepInBounds = ([{ xLeft, yTop }: {xLeft: number, yTop: number}]): Coordinates => (
-//   {
-//     xLeft: checkInBounds_1D(xLeft),
-//     yTop: checkInBounds_1D(yTop)
-//   });
-
 //
-// DETERMINE NEW POSITION OF SPRITE, BASED ON DIRECTION GIVEN
+// Determine new position of sprite, based on direction given
 //
 export const resolvePosition = (uiObject: UIEntityProps, direction: Direction): UIEntityProps => {
   let { xLeft, yTop, speed, angle, width, height } = uiObject;
 
   let hypoteneuse = (speed / 1.4142);
   let positionObject = {
-    speed, angle: (Direction[direction.toString()] || angle), xLeft, yTop, width, height};
+    speed, angle: (Direction[direction.toString()] || angle), xLeft, yTop, width, height
+  };
   const boundCheck = _.partial(checkInBounds_1D, direction.toString());
 
   positionObject = calculateNextTickPosition(direction, positionObject);
