@@ -23,7 +23,7 @@ const TARGET = process.env.npm_lifecycle_event;
 process.env.BABEL_ENV = TARGET;
 
 module.exports = {
-  // context: path.join(__dirname, "app"),
+
   entry: [
     srcFilePath('root.tsx')
   ],
@@ -55,36 +55,11 @@ module.exports = {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        // exclude: ['node_modules','typings'],
-        // loaders: 'react-hot!ts-loader'
         loaders: ['babel', 'ts-loader']
-        // loaders: ['ts-loader', 'babel']
       },
       { test: /\.((hbs)|(handlebars))$/, loader: "handlebars-loader" },
-      // {
-      //   test: /\.[jt]sx?$/,
-      //   include: [path.resolve(__dirname, 'app')],
-      //   exclude: ['node_modules','typings'],
-      //   query: {
-      //     presets: ["react"]
-      //   },
-      //   loader: 'babel?cacheDirectory=cache'
       { test: /\.json$/, loader: 'json' },
       { test: /\.css$/, loader: "style-loader!css-loader!postcss-loader" },
-      // {
-      //   test: /.*\.(gif|png|jpe?g|svg)$/i,
-      //   loaders: [
-      //     'file?hash=sha512&digest=hex&name=[hash].[ext]',
-      //     'image-webpack?{progressive:true, optimizationLevel: 7, interlaced: false, pngquant:{quality: "65-90", speed: 4}}'
-      //   ]
-      // }
-
-      // {
-      //   test: /\.(jpg|png)$/,
-      //   loader: 'file?name=[path][name].[hash].[ext]',
-      //   include:  path.join(srcPath, 'components')
-      // }
-
       {
         test: /\.(jpg|png)$/,
         loader: 'url?limit=25000',
@@ -95,32 +70,6 @@ module.exports = {
         loader: 'babel',
         exclude: /node_modules/
       }
-
-      // {
-      //   test: /\.(jpe?g|png|gif|svg)$/i,
-      //   loaders: [
-      //       'file' + 
-      //         '?hash' +   '=' + 'sha512' +
-      //         '&digest' + '=' + 'hex' +
-      //         '&name'   + '=' + '[hash].[ext]',
-      //       'image-webpack' + 
-      //         '?bypassOnDebug' +
-      //         '&optimizationLevel' + '=' + '7' +
-      //         '&interlaced' +        '=' + 'false'
-      //   ]
-      // }
-
-      // {
-      //   test: /\.css$/,
-      //   loader: ExtractTextPlugin.extract("style-loader", "css-loader")
-      //   // loaders: ['style',
-      //   //      /**/ 'css?modules' +
-      //   //              '&importLoaders=1']
-      //           // +
-      //           // '!' +
-      //           //  'postcss-loader' +
-      //           //        '?sourceMap=inline'
-      // }
     ]
   },
 
@@ -150,10 +99,6 @@ module.exports = {
   },
 
   plugins: [
-    // new HtmlWebpackPlugin({
-    //   title: 'My test react project',
-    //   template: srcFilePath('index.html')
-    // }),
     new ExtractTextPlugin("[name].css"),
     new HandlebarsPlugin({
       // path to main hbs template

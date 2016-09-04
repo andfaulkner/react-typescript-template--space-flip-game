@@ -4,18 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "OLD_OLD_pretest": "tsc ./test/**.spec.tsx --module commonjs",
     "dev": "webpack-dev-server --config ./config/webpack.dev.config.js --inline --progress --hot --colors --port 8080 --content-base ./",
     "serve-assets": "ts-node --project server server/server.ts",
     "build": "webpack",
     "test-karma": "karma start",
-    "OLD_OLD_test": "mocha --opts mocha.opts && rm -rf test",
     "test:auto": "mocha --opts mocha.opts --watch",
     "start": "webpack-dev-server",
-    "OLD_TEST": "mocha --colors --es_staging --no-deprecation --recursive",
-    "pretest__EX": "tsc -p test/tsconfig.json",
-    "test__EX": "mocha temp/testBuild/test --recursive --compilers js:babel-register",
-    "test___EX_2": "mocha --opts mocha.opts",
     "test": "gulp mocha",
     "test-watch": "gulp mocha-watch"
   },
