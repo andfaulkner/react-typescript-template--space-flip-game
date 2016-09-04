@@ -97,6 +97,8 @@ export interface UIEntityBoxProps {
 
 export interface AppState {
   time:    number;
+  updateReady: boolean;
+  inputQueue: any[];
   player:  UIEntityProps;
   bullets: UIEntityProps[];
   uiBoxes: UIEntityProps[];

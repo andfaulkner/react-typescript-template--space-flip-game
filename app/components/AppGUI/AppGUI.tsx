@@ -52,6 +52,8 @@ const bulletWidth = 7;
 
 const defaultState: AppState = {
     time: Date.now(),
+    inputQueue: [],
+    updateReady: false,
     player: {
       xLeft: 0,
       yTop: 0,
@@ -86,7 +88,11 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
       const keyName = _.get(controls, e.key).toString();
 
       const addKeypressToQueue = (inputType) => {
-        inputQueue.push({ type: inputType, data: keyName}); };
+        let newInputQueue = _.cloneDeep(this.state.inputQueue);
+        console.log('newInputQueue', newInputQueue);
+        newInputQueue.push({ type: inputType, data: keyName });
+        this.setState(Object.assign({}, this.state, { inputQueue: newInputQueue }));
+      };
 
       if (_.includes(keyName, 'Shoot')) {
         addKeypressToQueue(InputType.PlayerShoot);
@@ -98,6 +104,16 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
         addKeypressToQueue(InputType.PlayerMove);
       }
     }
+  };
+
+  shouldComponentUpdate = (nextProps, nextState) => {
+    // AHA THIS IS THE KEY! THIS IS HOW YOU CAN MAKE THIS WORK WITH A GAME LOOP!
+    // TODO: SPLIT THIS COMPONENT.
+    console.log('AppGUI.tsx:: nextState', nextState);
+    if (!_.isEqual(this.state, nextState)) {
+      return true;
+    }
+    return false;
   };
 
   render() {
@@ -127,9 +143,9 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
    * calculate new positions of all the things
    */
   handleInputQueue = (curState, inputQueue: InputEvent[]) => {
-    console.log('resolveMove#handleInputQueue: inputQueue', inputQueue);
+    console.log('resolveMove#handleInputQueue: inputQueue', this.state.inputQueue);
 
-    _.each(inputQueue, (inputEvent: InputEvent) => {
+    _.each(this.state.inputQueue, (inputEvent: InputEvent) => {
       let inputType = InputType[inputEvent.type];
 
       if (inputType === InputType[InputType.PlayerMove]) {
@@ -148,18 +164,20 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
   /**
    * Handle UI changes that occur as a direct result of user input (e.g. player movement, shooting)
    */
-  handleInput = (time: number, newPositions) => {
-    if (inputQueue.length > 0) { // do nothing if there are no input events
-      newPositions = this.handleInputQueue(newPositions, inputQueue);
-      inputQueue = [];
+  handleInput = (time: number, newPositions, cb: Function) => {
+    if (this.state.inputQueue.length > 0) { // do nothing if there are no input events
+      newPositions = this.handleInputQueue(this.state, this.state.inputQueue);
+      this.setState(Object.assign({}, this.state, { inputQueue: [] }));
+      cb(newPositions);
+    } else {
+      cb(newPositions);
     }
-    return newPositions;
   };
 
   /**
    * Randomly generate NPCs (self-directed UI elements such as enemies) 
    */
-  generateNPCs = (curState: AppState, odds: number = 40) => {
+  generateNPCs = (curState: AppState, odds: number = 20) => {
     // create NPC at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
     if ((curState.uiBoxes.length <= 10) && (_.random(0, 20) === 20)) {
       switch (_.sample(['uiBox', 'enemy.crawler'])) {
@@ -196,9 +214,7 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
   handleUpdates = (curState: AppState, time: number): AppState => {
     curState.time = time;
     curState.bullets = updateBulletPositions(curState.bullets);
-    curState = this.moveNpcs(curState);
-    curState = this.generateNPCs(curState);
-    curState = bulletToUIEntityCollisions(curState);
+    curState = this.moveNpcs(this.generateNPCs(bulletToUIEntityCollisions(curState)));
     return curState;
   };
 
@@ -213,9 +229,16 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
     let time = Date.now();
     if (time - lastRender > 100) { // ensure game loop only ticks 10X / s
       lastRender = time;
-      let newPositions = this.handleInput(time, this.state);
-      newPositions = this.handleUpdates(newPositions, time);
-      this.setState(_.assign(this.state, newPositions, { time }));
+      console.log('AppGUI.tsx:: tick: this.state', this.state);
+      this.handleInput(time, this.state, (newPositions) => {
+        newPositions = this.handleUpdates(newPositions, time);
+        this.setState(Object.assign({},
+                                    this.state,
+                                    newPositions,
+                                    { inputQueue: [], updateReady: true }), () => {
+            this.setState(Object.assign({}, this.state, { updateReady: false }));
+          });
+      });
     }
     requestAnimationFrame(this.tick);
   };
