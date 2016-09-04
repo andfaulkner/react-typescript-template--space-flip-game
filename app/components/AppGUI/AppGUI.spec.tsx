@@ -23,8 +23,6 @@ import { AppGUI } from './AppGUI';
 //   };
 // };
 
-
-
 describe('<AppGUI>', () => {
   it('should be clickable', () => {
     const mockOnClick = sinon.spy();

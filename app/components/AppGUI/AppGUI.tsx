@@ -37,6 +37,8 @@ import { createBullet } from '../../logic/createBullet.tsx';
 import { updateBulletPositions } from '../../logic/resolveBulletMovement.tsx';
 import { bulletToUIEntityCollisions } from '../../logic/collisionHandler.tsx';
 
+import { connect } from 'react-redux';
+
 console.log('app base js loaded');
 
 require('./AppGUI.css');
@@ -70,10 +72,15 @@ const defaultState: AppState = {
     score: Math.floor(0.001) // help prevent coersion to boolean
 };
 
+interface AppProps {
+  spriteSize: number;
+  onClick: Function;
+}
+
 /**
  * Entry point for the whole application (excepting the redux wrapper)
  */
-export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
+class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
   state: AppState = defaultState;
 
   componentWillMount = () => requestAnimationFrame(this.tick);
@@ -89,7 +96,7 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
 
       const addKeypressToQueue = (inputType) => {
         let newInputQueue = _.cloneDeep(this.state.inputQueue);
-        console.log('newInputQueue', newInputQueue);
+        // console.log('newInputQueue', newInputQueue);
         newInputQueue.push({ type: inputType, data: keyName });
         this.setState(Object.assign({}, this.state, { inputQueue: newInputQueue }));
       };
@@ -103,13 +110,19 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
       } else {
         addKeypressToQueue(InputType.PlayerMove);
       }
+    },
+
+    onClick: (e): void => {
+      console.log('AppGUI.tsx:: e', e);
+      console.log('AppGUI.tsx:: this', this);
+      this.props.onClick(false);
     }
   };
 
   shouldComponentUpdate = (nextProps, nextState) => {
     // AHA THIS IS THE KEY! THIS IS HOW YOU CAN MAKE THIS WORK WITH A GAME LOOP!
     // TODO: SPLIT THIS COMPONENT.
-    console.log('AppGUI.tsx:: nextState', nextState);
+    // console.log('AppGUI.tsx:: nextState', nextState);
     if (!_.isEqual(this.state, nextState)) {
       return true;
     }
@@ -122,7 +135,7 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
           <EntityComponent key={index} {...extraProps} {...entity} />);
     };
     return (
-      <div onKeyDown={ this.events.keypress.bind(this) }>
+      <div onKeyDown={ this.events.keypress.bind(this) } onClick={ this.events.onClick.bind(this) }>
         <div className="layout-transparent mdl-layout mdl-js-layout">
           <NavHeader />
           <main className="mdl-layout__content">
@@ -143,7 +156,7 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
    * calculate new positions of all the things
    */
   handleInputQueue = (curState, inputQueue: InputEvent[]) => {
-    console.log('resolveMove#handleInputQueue: inputQueue', this.state.inputQueue);
+    // console.logeMove#handleInputQueue: inputQueue', this.state.inputQueue);
 
     _.each(this.state.inputQueue, (inputEvent: InputEvent) => {
       let inputType = InputType[inputEvent.type];
@@ -226,10 +239,10 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
    *               4) Clear inputQueue
    */
   tick = () => {
-    let time = Date.now();
+    let time: number = Date.now();
     if (time - lastRender > 100) { // ensure game loop only ticks 10X / s
       lastRender = time;
-      console.log('AppGUI.tsx:: tick: this.state', this.state);
+      // console.log('AppGUI.tsx:: tick: this.state', this.state);
       this.handleInput(time, this.state, (newPositions) => {
         newPositions = this.handleUpdates(newPositions, time);
         this.setState(Object.assign({},
@@ -243,3 +256,15 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
     requestAnimationFrame(this.tick);
   };
 };
+
+import { testSwitchState_AC } from '../../store/actions.tsx';
+
+const mapDispatchToProps = (dispatch) => ({
+  onClick: newState => {
+    console.log('AppGUI.tsx:: mapDispatchToProps: onClick');
+    dispatch(testSwitchState_AC(newState));
+  }
+});
+
+export const AppGUI: any = connect(null, mapDispatchToProps)(AppGUIUnwrapped as any);
+

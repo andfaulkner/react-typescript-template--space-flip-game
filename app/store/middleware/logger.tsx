@@ -1,6 +1,6 @@
-/// <reference path="../../typings/index.d.ts" />
+/// <reference path="../../../typings/index.d.ts" />
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 let logTime = (msg) => {
   let hour = moment().get('hour');

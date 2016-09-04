@@ -25,7 +25,6 @@ import { Cannon } from '../Cannon/Cannon';
 import { connect } from "react-redux";
 
 import { bindActionCreators } from "redux";
-import * as MyActions from "../../actions/changePlayerPosition";
 
 require('./Player.css');
 

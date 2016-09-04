@@ -32,6 +32,4 @@ describe('<NavHeader />', () => {
     expect(wrapper.find('a.mdl-navigation__link').someWhere((n) => (n.text() === 'Login')))
       .to.equal(true);
   });
-
-
 });

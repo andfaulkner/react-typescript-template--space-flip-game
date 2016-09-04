@@ -2,11 +2,19 @@
 
 import { Direction } from '../types/types.tsx';
 
-import { createStore, applyMiddleware } from 'redux';
-import { logger } from '../middleware/logger';
+import {
+  createStore,
+  applyMiddleware } from 'redux';
 
-import Action from '../actions/action';
-import reducers from './reducers';
+import { logger } from './middleware/logger';
+
+import Action from './actions.tsx';
+import { reducers } from './reducers.tsx';
+
+export let store = createStore(
+  reducers,
+  applyMiddleware(logger)
+);
 
 
 // // ACTIONS
@@ -63,8 +71,3 @@ import reducers from './reducers';
 //       break;
 //   }
 // };
-
-export let store = createStore(
-  reducers,
-  applyMiddleware(logger)
-);
