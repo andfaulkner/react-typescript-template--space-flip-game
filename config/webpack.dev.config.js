@@ -31,8 +31,8 @@ module.exports = {
   output: {
     path: buildPath,
     filename: "app.js",
-    hotUpdateMainFilename: "[hash]/update.json",
-    hotUpdateChunkFilename: "[hash]/js/[id].update.js"
+    // hotUpdateMainFilename: "[hash]/update.json",
+    // hotUpdateChunkFilename: "[hash]/js/[id].update.js"
   },
 
   resolveLoader: {

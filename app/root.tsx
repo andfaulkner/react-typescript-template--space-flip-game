@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { Provider } from 'react-redux';
-import { store } from './store.tsx'; // only import from here
+import { store } from './store/store.tsx'; // only import from here
 import { AppGUI } from './components/AppGUI/AppGUI.tsx';
 
 export class Root extends React.Component<{}, {}> {

@@ -1,5 +1,6 @@
 /// <reference path="../../../typings/index.d.ts" />
 
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import TransitionGroup from 'react-addons-transition-group';
@@ -105,22 +106,17 @@ export class AppGUI extends React.Component<{ spriteSize: number }, AppState> {
           <EntityComponent key={index} {...extraProps} {...entity} />);
     };
     return (
-      <div onKeyDown = { this.events.keypress.bind(this) }>
+      <div onKeyDown={ this.events.keypress.bind(this) }>
         <div className="layout-transparent mdl-layout mdl-js-layout">
           <NavHeader />
           <main className="mdl-layout__content">
-            <Player
-              color={ PlayerColor.Red }
-              width={ this.props.spriteSize }
-              {...this.state.player}
-            />
+            <Player color={ PlayerColor.Red }
+                    width={ this.props.spriteSize }
+                    {...this.state.player} />
             { renderEntity(this.state.bullets,          Bullet,       {}) }
             { renderEntity(this.state.enemies.crawlers, EnemyCrawler, { reachedEnd: false }) }
             { renderEntity(this.state.uiBoxes,          BoxUIEntity,  {}) }
-            <HUD
-              score={ this.state.score }
-              time={ this.state.time }
-            />
+            <HUD score={ this.state.score } time={ this.state.time } />
           </main>
         </div>
       </div>

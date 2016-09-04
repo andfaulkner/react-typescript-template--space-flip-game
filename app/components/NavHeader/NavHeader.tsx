@@ -7,6 +7,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 require('./NavHeader.css');
+let appProps = require('../../../config/app_properties.json');
 
 export interface NavHeaderProps { };
 export interface NavHeaderState { };
@@ -16,7 +17,7 @@ export class NavHeader extends React.Component<NavHeaderProps, NavHeaderState> {
     return (
       <header className="mdl-layout__header mdl-layout__header--transparent">
         <div className="mdl-layout__header-row">
-          <span className="mdl-layout-title">Title</span>
+          <span className="mdl-layout-title">{appProps.name}</span>
           <div className="mdl-layout-spacer"></div>
           <nav className="mdl-navigation">
             <a className="mdl-navigation__link" href="">Game</a>

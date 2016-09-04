@@ -1,32 +1,29 @@
-'use strict';
+/// <reference path="../../typings/index.d.ts" />
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.store = undefined;
+import { Direction } from '../types/types.tsx';
 
-var _redux = require('redux');
+import { createStore, applyMiddleware } from 'redux';
+import { logger } from '../middleware/logger';
 
-var _logger = require('./middleware/logger');
+import Action from '../actions/action';
+import reducers from './reducers';
 
-var _reducers = require('./reducers');
-
-var _reducers2 = _interopRequireDefault(_reducers);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // // ACTIONS
 // export const CHANGE_DIRECTION = 'CHANGE_DIRECTION';
 // export const CHANGE_SPEED = 'CHANGE_SPEED';
 // export const SHOOT_GUN = 'SHOOT_GUN';
+
 // // ACTION CREATORS
 // // export let changePosition = (xLeft: number, yTop: number) => ({ type: 'CHANGE_POSITION', xLeft, yTop });
 // export let changeDirection = (direction: Direction) =>      ({ type: 'CHANGE_DIRECTION', direction });
 // export let changeSpeed = (speed: number) =>                 ({ type: 'CHANGE_SPEED', speed });
+
 // // INTERFACES
 // interface State {
 //   player: PlayerState;
 // }
+
 // // DEFAULT STATE
 // let initialState: State = {
 //   player: {
@@ -36,8 +33,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //     speed: 3
 //   }
 // };
+
 // // create reducer without types
 // // create state type
+
 // // REDUCERS
 // export let appReducers = (state: State = initialState, action: Action): State => {
 //   switch (action.type) {
@@ -64,4 +63,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //       break;
 //   }
 // };
-let store = exports.store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_logger.logger)); /// <reference path="../typings/index.d.ts" />
+
+export let store = createStore(
+  reducers,
+  applyMiddleware(logger)
+);
