@@ -14,7 +14,7 @@ import {
 import { Bullet } from '../Bullet/Bullet.tsx';
 import { KeyController } from '../KeyController/KeyController';
 import { BoxUIEntity } from '../BoxUIEntity/BoxUIEntity.tsx';
-import { EnemyCrawler } from '../EnemyCrawler/EnemyCrawler';
+import { EnemyCrawler, EnemyCrawlerProps } from '../EnemyCrawler/EnemyCrawler';
 import { HUD } from '../HUD/HUD';
 import { NavHeader } from '../NavHeader/NavHeader.tsx';
 
@@ -23,7 +23,6 @@ import {
   InputType,
   InputEvent,
   AppState,
-  EnemyCrawlerProps,
   controls } from '../../types/types.tsx';
 
 import {

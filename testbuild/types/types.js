@@ -55,4 +55,3 @@ var InputType = exports.InputType = undefined;
     InputType[InputType["PlayerShoot"] = 2] = "PlayerShoot";
 })(InputType || (exports.InputType = InputType = {}));
 ;
-;

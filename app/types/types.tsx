@@ -1,3 +1,6 @@
+import { EnemyCrawlerProps } from '../components/EnemyCrawler/EnemyCrawler.tsx';
+
+
 // ENUMS
 export enum Dimension {
   width,
@@ -91,10 +94,6 @@ export interface UIEntityBoxProps {
   angle: number;
   timeCreated?: number;
 }
-
-export interface EnemyCrawlerProps extends UIEntityProps {
-  reachedEnd: boolean;
-};
 
 export interface AppState {
   time:    number;

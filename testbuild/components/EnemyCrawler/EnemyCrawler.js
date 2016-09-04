@@ -16,6 +16,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 /// <reference path="../../../typings/index.d.ts" />
 ;
 ;
+;
 class EnemyCrawler extends _UIEntity.UIEntity {
     render() {
         return React.createElement('div', { className: 'enemyCrawler', style: this.calcOffset() });

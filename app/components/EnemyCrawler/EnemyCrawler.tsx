@@ -10,13 +10,16 @@ import { UIEntity } from '../UIEntity/UIEntity';
 
 import {
   UIEntityProps,
-  BoxCoordinates,
-  EnemyCrawlerProps
+  BoxCoordinates
 } from '../../types/types';
 
 require('./EnemyCrawler.css');
 
 interface EnemyCrawlerState { };
+
+export interface EnemyCrawlerProps extends UIEntityProps {
+  reachedEnd: boolean;
+};
 
 export class EnemyCrawler extends UIEntity<EnemyCrawlerProps, { }> {
   render() {

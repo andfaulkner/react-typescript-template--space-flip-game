@@ -7,17 +7,15 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { expect } from 'chai';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import * as sinon from 'sinon';
 import * as mocha from 'mocha';
 
-import { CurrentScore } from './CurrentScore.tsx';
+import { EnemyCrawler } from './EnemyCrawler';
 
-describe('<CurrentScore />', () => {
-  it('should contain 1 div', () => {
-    console.log('CurrentScore.spec: testing');
-    const wrapper = shallow(<CurrentScore score={3} />);
+describe('<EnemyCrawler>', () => {
+  it('should have one div', () => {
+    const wrapper = shallow(<EnemyCrawler reachedEnd={true} angle={90} width={20} height={20} speed={3} xLeft={22} yTop={55}/>);
     expect(wrapper.find('div')).to.have.length(1);
   });
 });
-
