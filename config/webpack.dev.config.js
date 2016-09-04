@@ -5,10 +5,10 @@ let webpack = require('webpack');
 let HandlebarsPlugin = require('handlebars-webpack-plugin');
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-let srcPath = path.join(__dirname, 'app');
-let buildPath = path.join(__dirname, 'build');
-let libPath = path.join(__dirname, 'node_modules');
-let configFile = "./config/config.json";
+let srcPath = path.join(__dirname, '..', 'app');
+let buildPath = path.join(__dirname, '..', 'build');
+let libPath = path.join(__dirname, '..', 'node_modules');
+let configFile = "./config.json";
 
 function buildFilePath(currentPath) {
   return path.join(buildPath, currentPath);
