@@ -14,3 +14,15 @@ div#currentscore {
   font-size: 20px;
   cursor: default;
 }
+
+@define-mixin icon $name {
+    padding-left: 16px;
+    &::after {
+        content: "";
+        background-url: url(/icons/$(name).png);
+    }
+}
+
+.search {
+    @mixin icon search;
+}

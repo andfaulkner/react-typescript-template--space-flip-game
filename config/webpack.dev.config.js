@@ -82,9 +82,11 @@ module.exports = {
       // }),
       // require('lost'),
       // require('postcss-for'),
-      // require('postcss-mixins'),
       // require('postcss-nested'),
       // require('postcss-current-selector'),
+      require('postcss-mixins')({
+        mixinsFiles: path.join(__dirname, '..', 'app/assets/mixins.css')
+      }),
       require('postcss-partial-import')({
         addDependencyTo: webpack
       }),

@@ -1,0 +1,8 @@
+@define-mixin size $size {
+  width: $size;
+  height: $size;
+}
+
+@define-mixin boo $black {
+  color: black;
+}

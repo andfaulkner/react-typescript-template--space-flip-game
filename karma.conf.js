@@ -14,7 +14,7 @@ module.exports = function(config) {
     frameworks: [
       'mocha',
       "chai",
-      // "sinon",
+      "sinon",
       "es6-shim"
     ],
 
@@ -23,15 +23,6 @@ module.exports = function(config) {
      * starting with karma-*. You can also explicitly list plugins you want
      * to load via the plugins configuration setting.
      */
-    // plugins: [
-    //   "karma-mocha",
-    //   "karma-sinon",
-    //   "karma-chai",
-    //   "karma-chrome-launcher",
-    //   "karma-phantomjs-launcher",
-    //   "karma-webpack",
-    //   "karma-mocha-reporter"
-    // ],
     plugins: [
       "karma-*"
     ],
@@ -40,11 +31,6 @@ module.exports = function(config) {
     files: [
       'test/**/*.tsx',
     ],
-    // files: [
-    //   'app/**/*.tsx',
-    //   'test/**/*.tsx',
-    // ],
-
 
     // list of files to exclude
     exclude: [],
