@@ -8,8 +8,8 @@ import * as ReactDOM from 'react-dom';
 
 require('./NavHeader.css');
 
-interface NavHeaderProps { };
-interface NavHeaderState { };
+export interface NavHeaderProps { };
+export interface NavHeaderState { };
 
 export class NavHeader extends React.Component<NavHeaderProps, NavHeaderState> {
   render() {

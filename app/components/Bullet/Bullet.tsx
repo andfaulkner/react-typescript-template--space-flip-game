@@ -15,7 +15,7 @@ import { UIEntity } from '../UIEntity/UIEntity';
 
 require('./Bullet.css');
 
-interface BulletProps {
+export interface BulletProps {
   xLeft: number;
   yTop: number;
   angle: number;
@@ -24,7 +24,7 @@ interface BulletProps {
   height: number;
 };
 
-interface BulletState { };
+export interface BulletState { };
 
 export class Bullet extends UIEntity<BulletProps, { }> {
   render() {

@@ -15,8 +15,8 @@ import { UIEntity } from '../UIEntity/UIEntity';
 
 require('./BoxUIEntity.css');
 
-interface BoxUIEntityProps extends UIEntityProps { };
-interface BoxUIEntityState { };
+export interface BoxUIEntityProps extends UIEntityProps { };
+export interface BoxUIEntityState { };
 
 export class BoxUIEntity extends UIEntity<BoxUIEntityProps, { }> {
   render() {

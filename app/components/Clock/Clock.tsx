@@ -9,11 +9,11 @@ import * as $ from 'jquery';
 
 require('./Clock.css');
 
-interface ClockProps {
+export interface ClockProps {
   time: number;
 };
 
-interface ClockState { };
+export interface ClockState { };
 
 export class Clock extends React.Component<ClockProps, ClockState> {
 

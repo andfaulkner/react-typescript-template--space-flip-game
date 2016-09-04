@@ -8,10 +8,11 @@ import * as ReactDOM from 'react-dom';
 
 require('./CurrentScore.css');
 
-interface CurrentScoreProps {
+export interface CurrentScoreProps {
   score: number;
 };
-interface CurrentScoreState { };
+
+export interface CurrentScoreState { };
 
 export class CurrentScore extends React.Component<CurrentScoreProps, CurrentScoreState> {
   render() {

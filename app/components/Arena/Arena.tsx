@@ -8,8 +8,8 @@ import * as ReactDOM from 'react-dom';
 
 require('./Arena.css');
 
-interface ArenaProps { };
-interface ArenaState { };
+export interface ArenaProps { };
+export interface ArenaState { };
 
 export class Arena extends React.Component<ArenaProps, ArenaState> {
   render() {

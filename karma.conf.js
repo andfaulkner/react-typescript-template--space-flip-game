@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Thu Sep 01 2016 07:44:31 GMT-0400 (EDT)
 
-var webpackConfig = require("./webpack.config");
+var webpackConfig = require("./config/webpack.test.config");
 
 module.exports = function(config) {
   config.set({
@@ -11,7 +11,12 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', "chai", "sinon", "es6-shim"],
+    frameworks: [
+      'mocha',
+      "chai",
+      // "sinon",
+      "es6-shim"
+    ],
 
     /*
      * By default, Karma loads all sibling NPM modules which have a name
@@ -47,7 +52,8 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      "test/*.tsx": ["webpack"]
+      "test/*.tsx": ["webpack"],
+      "test/**/*.tsx": ["webpack"]
     },
 
     // test results reporter to use
@@ -92,6 +98,5 @@ module.exports = function(config) {
         module: webpackConfig.module,
         resolve: webpackConfig.resolve
     }
-
   });
 };

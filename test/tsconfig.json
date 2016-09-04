@@ -12,7 +12,6 @@
         "noImplicitAny": false,
         "emitDecoratorMetadata": true,
         "jsx": "react",
-        "outDir": "../temp/testBuild",
         "pretty": true
     }
 }

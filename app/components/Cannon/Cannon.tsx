@@ -12,9 +12,9 @@ import * as $ from 'jquery';
 
 require('./Cannon.css');
 
-interface CannonProps { };
+export interface CannonProps { };
 
-interface CannonState {
+export interface CannonState {
   ammo: number;
   level: number;
 };

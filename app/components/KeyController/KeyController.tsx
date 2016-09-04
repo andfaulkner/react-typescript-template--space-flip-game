@@ -12,13 +12,11 @@ import * as $ from 'jquery';
 
 require('./KeyController.css');
 
-interface KeyControllerProps {
+export interface KeyControllerProps {
   input: { time: number };
 };
 
-interface KeyControllerState {
-
-};
+export interface KeyControllerState { };
 
 export class KeyController extends React.Component<KeyControllerProps, KeyControllerState> {
 

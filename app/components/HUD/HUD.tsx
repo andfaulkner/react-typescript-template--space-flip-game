@@ -12,12 +12,12 @@ import { ArenaBorder } from  '../ArenaBorder/ArenaBorder.tsx';
 
 require('./HUD.css');
 
-interface HUDProps {
+export interface HUDProps {
   time: number;
   score: number;
 };
 
-interface HUDState { };
+export interface HUDState { };
 
 const ArenaContainer = ({score}) => (
   <div className="arena-container">
