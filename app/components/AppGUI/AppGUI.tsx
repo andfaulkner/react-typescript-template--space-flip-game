@@ -136,9 +136,9 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
    */
   executeGameLoopActions = (time: number): void => {
     this.handleInput(time, this.props.uiState, (newPositions) => {
-      newPositions = this.props.resolveUIState(time, newPositions);
-      // newPositions = this.handleUpdates(newPositions, time);
-      this.props.setUIState(Object.assign({}, newPositions, { time: time }));
+      this.props.setUIState(Object.assign({},
+        this.props.resolveUIState(time, newPositions),
+        { time: time }));
       this.props.clearInputQueue();
       this.props.setUIUpdateReady();
     });
@@ -179,55 +179,6 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
     } else {
       cb(curUI);
     }
-  };
-
-  // ** UPDATE HANDLING ** //
-  /**
-   * Handle UI changes that occur without input from the user (e.g. bullet and uiBox movement)
-   */
-  handleUpdates = (curUI: UIState, time: number): UIState => {
-    curUI.score = (curUI.score) ? curUI.score : this.props.uiState.score;
-    curUI.bullets = updateBulletPositions(curUI.bullets);
-    curUI = this.moveNPCs(curUI);
-    curUI = this.generateNPCs(curUI);
-    curUI = bulletToUIEntityCollisions(curUI);
-    return curUI;
-  };
-
-  // ** GENERATION OF DATA ** //
-  /**
-   * Randomly generate NPCs (self-directed UI elements such as enemies) 
-   */
-  generateNPCs = (curUI: UIState, odds: number = 20): UIState => {
-    // create NPC at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
-    if ((curUI.uiBoxes.length <= 10) && (_.random(0, 20) === 20)) {
-      switch (_.sample(['uiBox', 'enemy.crawler'])) {
-        case('uiBox'):
-          curUI.uiBoxes = createUIBox(curUI);
-          break;
-        case('enemy.crawler'):
-          curUI.enemies = createEnemy(curUI, curUI.enemies, 'crawler');
-          break;
-      }
-    }
-    return curUI;
-  }
-
-  // ** UPDATE HANDLING ** //
-  /**
-   * Generate random movements from enemies
-   * ** ONGOING **
-   */
-  moveNPCs = (curUI: UIState): UIState => {
-    curUI.enemies.crawlers = _.map(curUI.enemies.crawlers, (crawler: EnemyCrawlerProps) => {
-      crawler.xLeft -= 1;
-      if ((crawler.xLeft - crawler.width) < -300) {
-        crawler.xLeft = -300 + crawler.width;
-        crawler.reachedEnd = true;
-      }
-      return crawler;
-    });
-    return curUI;
   };
 };
 
