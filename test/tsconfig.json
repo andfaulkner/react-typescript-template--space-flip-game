@@ -13,5 +13,8 @@
         "emitDecoratorMetadata": true,
         "jsx": "react",
         "pretty": true
-    }
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }

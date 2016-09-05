@@ -1,6 +1,5 @@
 import { EnemyCrawlerProps } from '../components/EnemyCrawler/EnemyCrawler.tsx';
 
-
 // ENUMS
 export enum Dimension {
   width,
@@ -57,7 +56,7 @@ export enum InputType {
 
 export interface InputEvent {
   type: InputType;
-  data: any;
+  input: any;
 }
 
 export interface Coordinates {

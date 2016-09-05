@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 
 import {
-  AppState, UIEntityProps, UIState
+  UIEntityProps, UIState,
 } from '../types/types';
 
 declare function require(name: string);
@@ -18,23 +18,21 @@ export const detectCollision = (npc: UIEntityProps, bullet: UIEntityProps) =>
    (bullet.yTop < npc.yTop + bullet.height) &&
    (bullet.yTop > npc.yTop - npc.height));
 
-// temp storage of app state to let bulletCollisionHandler mutate it for bulletToUIEntityCollisions
+// temp storage of app state to let bulletCollision mutate it for bulletToUIEntityCollisions
 let curStateClosure: UIState;
 
 /**
  * Determine if a bullet struck a specific element; & if it did, rm the bullet from the app state
  * and return the element array with the struck element removed.
  */
-const bulletCollisionHandler = (entityArr: UIEntityProps[], { points }) => {
-  let retVal = _.reject(entityArr, (uiBox: UIEntityProps) =>
-    !_.isEmpty(_.remove(curStateClosure.bullets, (bullet: UIEntityProps) => {
+const bulletCollision = (entityArr: UIEntityProps[], { points }) =>
+  _.reject(entityArr, (uiBox: UIEntityProps) => !_.isEmpty(_.remove(curStateClosure.bullets,
+    (bullet: UIEntityProps) => {
       if (detectCollision(uiBox, bullet)) {
         curStateClosure.score = curStateClosure.score + points;
         return true;
       }
     })));
-  return retVal;
-};
 
 /**
  * Detect collisions with bullets
@@ -44,10 +42,10 @@ export const bulletToUIEntityCollisions = (curState: UIState): UIState => {
   return Object.assign({},
     curStateClosure,
     {
-      uiBoxes: bulletCollisionHandler(curStateClosure.uiBoxes, { points: 0 }),
+      uiBoxes: bulletCollision(curStateClosure.uiBoxes, { points: 0 }),
       enemies: {
-        crawlers: bulletCollisionHandler(curStateClosure.enemies.crawlers, { points: 1 })
-      }
+        crawlers: bulletCollision(curStateClosure.enemies.crawlers, { points: 1 }),
+      },
     }
   );
 };

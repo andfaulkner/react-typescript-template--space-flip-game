@@ -1,5 +1,11 @@
 {
+    "extends": ["tslint:latest", "tslint-react"],
     "rules": {
+        "object-literal-sort-keys": false,
+        "only-arrow-functions": false,
+        "class-name": true,
+        "member-access": false,
+        "jsx-self-close": true,
         "class-name": true,
         "comment-format": [
             false,
@@ -9,6 +15,8 @@
             true,
             "spaces"
         ],
+        "interface-name": false,
+        "no-console": false,
         "no-duplicate-variable": true,
         "no-eval": true,
         "no-internal-module": true,

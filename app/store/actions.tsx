@@ -1,64 +1,22 @@
-import { Action } from './action.tsx';
-import { InputEvent, UIEntityProps, UIState } from '../types/types.tsx';
+/// <reference path="../../typings/index.d.ts" />
 
+import * as _ from "lodash";
+import createActions from '../../node_modules/redux-actions/lib/createActions'; // WEIRD IMPORT REQUIRED DUE TO ERROR
+import { InputEvent, UIState } from '../types/types.tsx';
 
-export const TEST_SWITCH_STATE = 'TEST_SWITCH_STATE';
-export const CHANGE_DIRECTION = 'CHANGE_DIRECTION';
+const actionData = {
+  ADD_ITEM_TO_INPUT_QUEUE: (input: InputEvent) => input,
+  CLEAR_INPUT_QUEUE: i => i,
+  RESET_LAST_RENDERED_TIME: i => i,
+  SET_UI_STATE: newState => newState,
+  SET_UI_UPDATE_READY: i => i,
+  TEST_SWITCH_STATE: i => i,
+  RESOLVE_UI_STATE: (time: number, uiState: UIState) => ({ time, uiState }),
+};
 
-//
-// EXPERIMENTAL ACTION CREATOR
-//
-export const testSwitchState_AC = (newState: boolean): Action<{testStateProperty: boolean}> => ({
-  type: TEST_SWITCH_STATE,
-  payload: {
-    testStateProperty: newState
-  }
-});
+export const actions: any = _.reduce(Object.keys(actionData),
+  (total, act) => _.merge(total, {[act]: act}),
+{});
 
-export const ADD_ITEM_TO_INPUT_QUEUE = 'ADD_ITEM_TO_INPUT_QUEUE';
-
-export const addItemToInputQueue = (itemToAdd: InputEvent): Action<{itemToAdd: InputEvent}> => ({
-  type: ADD_ITEM_TO_INPUT_QUEUE,
-  payload: {
-    itemToAdd
-  }
-});
-
-export const CLEAR_INPUT_QUEUE = 'CLEAR_INPUT_QUEUE';
-
-export const clearInputQueue = (): Action<{}> => ({
-  type: CLEAR_INPUT_QUEUE,
-  payload: {}
-});
-
-export const RESET_LAST_RENDERED_TIME = 'RESET_LAST_RENDERED_TIME';
-
-export const resetLastRenderedTime = (): Action<{}> => ({
-  type: RESET_LAST_RENDERED_TIME,
-  payload: { }
-});
-
-export const SET_UI_STATE = 'SET_UI_STATE';
-
-export const setUIState = (newState): Action<UIState> => ({
-  type: SET_UI_STATE,
-  payload: newState
-});
-
-export const SET_UI_UPDATE_READY = 'SET_UI_UPDATE_READY';
-
-export const setUIUpdateReady = (): Action<{}> => ({
-  type: SET_UI_UPDATE_READY,
-  payload: { }
-});
-
-export const RESOLVE_UI_STATE = 'RESOLVE_UI_STATE';
-
-export const resolveUIState = (time: number, uiState: UIState): Action<any> => ({
-  type: RESOLVE_UI_STATE,
-  payload: {
-    time,
-    uiState
-  }
-});
-
+export const actionCreators = _.mapKeys(createActions(actionData),
+  (v, k: string) => _.replace(k, /ui/i, 'UI'));

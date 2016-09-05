@@ -16,7 +16,6 @@
         "pretty": true
     },
     "exclude": [
-        "node_modules",
         "docs_guides/build_js",
         "*.js",
         "*.json",

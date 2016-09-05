@@ -1,11 +1,9 @@
-/// <reference path="../../../typings/index.d.ts" />
+import { UIState } from '../../types/types.tsx';
 
-import { UIState, UIEntityProps } from '../../types/types.tsx';
-
+import { EnemyCrawlerProps } from '../../components/EnemyCrawler/EnemyCrawler.tsx';
 import { bulletToUIEntityCollisions } from '../../logic/collisionHandler.tsx';
+import { createEnemy, createUIBox } from '../../logic/npcFactories.tsx';
 import { updateBulletPositions } from '../../logic/resolveBulletMovement.tsx';
-import { createUIBox, createEnemy } from '../../logic/npcFactories.tsx';
-import { EnemyCrawler, EnemyCrawlerProps } from '../../components/EnemyCrawler/EnemyCrawler.tsx';
 
 interface UIStateDataHandlers {
   (uiState: UIState): UIStateDataHandlerFunctions;
@@ -19,10 +17,10 @@ interface UIStateDataHandlerFunctions {
   updateBulletPos: () => UIStateDataHandlerFunctions;
 }
 
-let uiDataHandlers: UIStateDataHandlers = function uiDataHandlers(uiState: UIState): UIStateDataHandlerFunctions {
+let uiDataHandlers: UIStateDataHandlers = (uiState: UIState): UIStateDataHandlerFunctions => {
   let curUI: UIState = uiState;
 
-  const generateNPCs = function(odds: number = 20): UIStateDataHandlerFunctions {
+  const generateNPCs = function generateNPCs(odds: number = 20): UIStateDataHandlerFunctions {
     // create NPC at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
     if ((this.curUI.uiBoxes.length <= 10) && (_.random(0, 20) === 20)) {
       switch (_.sample(['uiBox', 'enemy.crawler'])) {
@@ -32,6 +30,8 @@ let uiDataHandlers: UIStateDataHandlers = function uiDataHandlers(uiState: UISta
         case('enemy.crawler'):
           this.curUI.enemies = createEnemy(this.curUI, this.curUI.enemies, 'crawler');
           break;
+        default:
+          console.log('no enemy generated');
       }
     }
     return this;
