@@ -76,9 +76,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
 
   events = {
     onClick: (e): void => {
-      // console.log('AppGUI.tsx:: e', e);
-      // console.log('AppGUI.tsx:: this', this);
-      // console.log('AppGUI.tsx:: testStateProperty: ', this.props.testStateProperty);
+      console.log('AppGUI.tsx:: clicked the component!');
       this.props.testSwitchState(!this.props.testStateProperty);
     }
   };
@@ -149,8 +147,6 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
    * calculate new positions of all the things
    */
   handleInputQueue = (curUI: UIState, inputQueue: InputEvent[]) => {
-    // console.logeMove#handleInputQueue: inputQueue', this.props.inputQueue);
-
     _.each(this.props.inputQueue, (inputEvent: InputEvent) => {
       let inputType = InputType[inputEvent.type];
 
@@ -175,10 +171,8 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
     if (this.props.inputQueue.length > 0) { // do nothing if there are no input events
       curUI = this.handleInputQueue(this.props.uiState, this.props.inputQueue);
       this.props.clearInputQueue();
-      cb(curUI);
-    } else {
-      cb(curUI);
     }
+    cb(curUI);
   };
 };
 

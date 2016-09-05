@@ -20,8 +20,6 @@ import {
   BoxCoordinates
 } from '../../types/types.tsx';
 
-import { Cannon } from '../Cannon/Cannon';
-
 import { connect } from "react-redux";
 
 import { bindActionCreators } from "redux";
