@@ -78,8 +78,6 @@ export interface UIEntityProps extends UIEntityVector {
   height: number;
 }
 
-
-
 export interface BoxCoordinates extends Coordinates {
   xRight: number;
   yBottom: number;
@@ -97,6 +95,7 @@ export interface UIEntityBoxProps {
 
 export interface AppState {
   time:    number;
+  lastRenderedTime: number;
   updateReady: boolean;
   inputQueue: any[];
   player:  UIEntityProps;

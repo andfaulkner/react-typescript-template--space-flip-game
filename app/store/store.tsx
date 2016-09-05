@@ -8,7 +8,6 @@ import {
 
 import { logger } from './middleware/logger';
 
-import Action from './actions.tsx';
 import { reducers } from './reducers.tsx';
 
 export let store = createStore(

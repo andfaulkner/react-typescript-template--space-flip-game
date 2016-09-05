@@ -3,15 +3,9 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import TransitionGroup from 'react-addons-transition-group';
 
-import { Button } from 'react-bootstrap';
-
-import {
-  Player,
-  PlayerProps
-} from '../Player/Player.tsx';
-
+// CUSTOM UI ELEMENTS
+import { Player, PlayerProps } from '../Player/Player.tsx';
 import { Bullet } from '../Bullet/Bullet.tsx';
 import { KeyController } from '../KeyController/KeyController';
 import { BoxUIEntity } from '../BoxUIEntity/BoxUIEntity.tsx';
@@ -19,32 +13,23 @@ import { EnemyCrawler, EnemyCrawlerProps } from '../EnemyCrawler/EnemyCrawler';
 import { HUD } from '../HUD/HUD';
 import { NavHeader } from '../NavHeader/NavHeader.tsx';
 
-import {
-  PlayerColor,
-  InputType,
-  InputEvent,
-  AppState,
-  controls } from '../../types/types.tsx';
+// TYPES
+import { PlayerColor, InputType, InputEvent, AppState, controls } from '../../types/types.tsx';
 
-import {
-  resolvePosition,
-  resolveSpeed
-} from '../../logic/resolvePlayerMovement.tsx';
-
+// LOGIC
+import { resolvePosition, resolveSpeed } from '../../logic/resolvePlayerMovement.tsx';
 import { createUIBox, createEnemy } from '../../logic/npcFactories.tsx';
-
 import { createBullet } from '../../logic/createBullet.tsx';
 import { updateBulletPositions } from '../../logic/resolveBulletMovement.tsx';
 import { bulletToUIEntityCollisions } from '../../logic/collisionHandler.tsx';
 
+// REDUX
 import { connect } from 'react-redux';
-
-console.log('app base js loaded');
+import { addItemToInputQueue, clearInputQueue, testSwitchState_AC,
+         resetLastRenderedTime } from '../../store/actions.tsx';
 
 require('./AppGUI.css');
-console.log('app base css loaded');
 
-let inputQueue: InputEvent[] = [];
 let lastRender = Date.now();
 
 // INTERFACES
@@ -53,29 +38,35 @@ const crawlerWidth = 28;
 const bulletWidth = 7;
 
 const defaultState: AppState = {
-    time: Date.now(),
-    inputQueue: [],
-    updateReady: false,
-    player: {
-      xLeft: 0,
-      yTop: 0,
-      angle: 270,
-      speed: 3,
-      width: 20,
-      height: 20
-    },
-    bullets: [],
-    uiBoxes: [],
-    enemies: {
-      crawlers: []
-    },
-    score: Math.floor(0.001) // help prevent coersion to boolean
+  time: Date.now(),
+  inputQueue: [],
+  lastRenderedTime: 0,
+  updateReady: false,
+  player: {
+    xLeft: 0,
+    yTop: 0,
+    angle: 270,
+    speed: 3,
+    width: 20,
+    height: 20
+  },
+  bullets: [],
+  uiBoxes: [],
+  enemies: {
+    crawlers: []
+  },
+  score: Math.floor(0.001) // help prevent coersion to boolean
 };
 
 interface AppProps {
   spriteSize: number;
-  onClick: Function;
-}
+  addItemToInputQueue: Function;
+  clearInputQueue: Function;
+  testSwitchState: Function;
+  resetLastRenderedTime: Function;
+  testStateProperty: boolean;
+  lastRenderedTime: number;
+};
 
 /**
  * Entry point for the whole application (excepting the redux wrapper)
@@ -115,7 +106,8 @@ class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
     onClick: (e): void => {
       console.log('AppGUI.tsx:: e', e);
       console.log('AppGUI.tsx:: this', this);
-      this.props.onClick(false);
+      console.log('AppGUI.tsx:: testStateProperty: ', this.props.testStateProperty);
+      this.props.testSwitchState(!this.props.testStateProperty);
     }
   };
 
@@ -130,18 +122,15 @@ class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
   };
 
   render() {
-    const renderEntity = (entityCollection, EntityComponent, extraProps: Object) => {
-      return _.map(entityCollection, (entity, index) =>
-          <EntityComponent key={index} {...extraProps} {...entity} />);
-    };
+    const renderEntity = (entityCollection, EntityComponent, extraProps: Object) =>
+        _.map(entityCollection, (entity, index) =>
+            <EntityComponent key={index} {...extraProps} {...entity} />);
     return (
       <div onKeyDown={ this.events.keypress.bind(this) } onClick={ this.events.onClick.bind(this) }>
         <div className="layout-transparent mdl-layout mdl-js-layout">
           <NavHeader />
           <main className="mdl-layout__content">
-            <Player color={ PlayerColor.Red }
-                    width={ this.props.spriteSize }
-                    {...this.state.player} />
+            <Player color={ PlayerColor.Red } width={ this.props.spriteSize } {...this.state.player}/>
             { renderEntity(this.state.bullets,          Bullet,       {}) }
             { renderEntity(this.state.enemies.crawlers, EnemyCrawler, { reachedEnd: false }) }
             { renderEntity(this.state.uiBoxes,          BoxUIEntity,  {}) }
@@ -152,6 +141,31 @@ class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
     );
   };
 
+  // ** GAME LOOP ** //
+  /**
+   * The game loop. Coordinates everything. Changes propagate down the tree every time it ticks.
+   * On each tick: 1) get input (from inputQueue);
+   *               2) Calc new app state (resolve position of items), then update stored app state
+   *               3) re-render views
+   *               4) Clear inputQueue
+   */
+  tick = () => {
+    let time: number = Date.now();
+    if (time - this.props.lastRenderedTime > 100) { // ensure game loop only ticks 10X / s
+      this.props.resetLastRenderedTime();
+      // console.log('AppGUI.tsx:: tick: this.state', this.state);
+      this.handleInput(time, this.state, (newPositions) => {
+        newPositions = this.handleUpdates(newPositions, time);
+        this.setState(Object.assign({}, this.state, newPositions,
+                                    { inputQueue: [], updateReady: true }), () => {
+            this.setState(Object.assign({}, this.state, { updateReady: false }));
+          });
+      });
+    }
+    requestAnimationFrame(this.tick);
+  };
+
+  // ** INPUT HANDLING ** //
   /**
    * calculate new positions of all the things
    */
@@ -174,6 +188,7 @@ class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
     return curState;
   };
 
+  // ** INPUT HANDLING ** //
   /**
    * Handle UI changes that occur as a direct result of user input (e.g. player movement, shooting)
    */
@@ -187,6 +202,7 @@ class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
     }
   };
 
+  // ** GENERATION OF DATA ** //
   /**
    * Randomly generate NPCs (self-directed UI elements such as enemies) 
    */
@@ -205,6 +221,7 @@ class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
     return curState;
   }
 
+  // ** UPDATE HANDLING ** //
   /**
    * Generate random movements from enemies
    * ** ONGOING **
@@ -221,6 +238,7 @@ class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
     return curState;
   };
 
+  // ** UPDATE HANDLING ** //
   /**
    * Handle UI changes that occur without input from the user (e.g. bullet and uiBox movement)
    */
@@ -230,41 +248,27 @@ class AppGUIUnwrapped extends React.Component<AppProps, AppState> {
     curState = this.moveNpcs(this.generateNPCs(bulletToUIEntityCollisions(curState)));
     return curState;
   };
-
-  /**
-   * The game loop. Coordinates everything. Changes propagate down the tree every time it ticks.
-   * On each tick: 1) get input (from inputQueue);
-   *               2) Calc new app state (resolve position of items), then update stored app state
-   *               3) re-render views
-   *               4) Clear inputQueue
-   */
-  tick = () => {
-    let time: number = Date.now();
-    if (time - lastRender > 100) { // ensure game loop only ticks 10X / s
-      lastRender = time;
-      // console.log('AppGUI.tsx:: tick: this.state', this.state);
-      this.handleInput(time, this.state, (newPositions) => {
-        newPositions = this.handleUpdates(newPositions, time);
-        this.setState(Object.assign({},
-                                    this.state,
-                                    newPositions,
-                                    { inputQueue: [], updateReady: true }), () => {
-            this.setState(Object.assign({}, this.state, { updateReady: false }));
-          });
-      });
-    }
-    requestAnimationFrame(this.tick);
-  };
 };
 
-import { testSwitchState_AC } from '../../store/actions.tsx';
 
-const mapDispatchToProps = (dispatch) => ({
-  onClick: newState => {
-    console.log('AppGUI.tsx:: mapDispatchToProps: onClick');
-    dispatch(testSwitchState_AC(newState));
-  }
+//
+// ************************ REDUX ************************* //
+//
+
+const mapStateToProps = (state) => ({
+  inputQueue: state.inputQueue,
+  lastRenderedTime: state.lastRenderedTime,
+  testStateProperty: state.testStateProperty
 });
 
-export const AppGUI: any = connect(null, mapDispatchToProps)(AppGUIUnwrapped as any);
+const mapDispatchToProps = (dispatch) => ({
+  addItemToInputQueue: (input: InputEvent): void => { dispatch(addItemToInputQueue(input)); },
+  clearInputQueue: (): void => { dispatch(clearInputQueue()); },
+  resetLastRenderedTime: (): void => { dispatch(resetLastRenderedTime()); },
+  testSwitchState: (newState: boolean): void => { dispatch(testSwitchState_AC(newState)); },
+});
 
+export const AppGUI: any = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppGUIUnwrapped as any);
