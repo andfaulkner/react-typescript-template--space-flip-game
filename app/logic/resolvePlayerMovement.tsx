@@ -25,7 +25,7 @@ const rotate = (angle: number, keyName: string) => {
  * Ensure player sprite is in bounds on the given dimension
  */
 const checkInBounds_1D = (direction: string, position: number, dimension: string = 'x'): number => {
-  console.log('resolvePlayerMovement#checkInBounds_1D: direction:', direction, 'dimension:', dimension);
+  // console.log('resolvePlayerMovement#checkInBounds_1D: direction:', direction, 'dimension:', dimension);
 
   let hasVertical = _.includes(direction, 'Up') || _.includes(direction, 'Down');
   let hasHorizontal = _.includes(direction, 'Left') || _.includes(direction, 'Right');

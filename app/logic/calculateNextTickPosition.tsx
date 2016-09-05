@@ -1,7 +1,7 @@
 /// <reference path="../../typings/index.d.ts" />
 
 export const calculateNextTickPosition = (direction, positionObject) => {
-  console.log('resolvePlayerMovement.tsx:: in positionCalc!');
+  // console.log('resolvePlayerMovement.tsx:: in positionCalc!');
   let { xLeft, yTop, speed } = positionObject;
   let hypoteneuse = speed / 1.4142;
 
@@ -35,7 +35,7 @@ export const calculateNextTickPosition = (direction, positionObject) => {
       positionObject.yTop = yTop + hypoteneuse;
       return positionObject;
     default:
-      console.log('ERROR: resolveMovement#resolvePosition: other value');
+      // console.log('ERROR: resolveMovement#resolvePosition: other value');
       return positionObject;
   }
 };

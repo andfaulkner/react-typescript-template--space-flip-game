@@ -8,16 +8,6 @@ import {
 
 declare function require(name: string);
 
-
-// export const destroyCollisions = (set1: Coordinates[], set2: Coordinates[], ...widths: number[]) => (
-//   {
-//     set1: _.reject(set1, set1El =>
-//             _.remove(set2, (set2El, i) =>
-//               this.detectCollision(set1El, set2El, widths))),
-//     set2
-//   }
-// );
-
 /**
  * naive collision detection
  * TODO replace with robust collision detection
@@ -35,15 +25,16 @@ let curStateClosure: UIState;
  * Determine if a bullet struck a specific element; & if it did, rm the bullet from the app state
  * and return the element array with the struck element removed.
  */
-const bulletCollisionHandler = (entityArr: UIEntityProps[], { points }) =>
-  _.reject(entityArr, (uiBox: UIEntityProps) =>
+const bulletCollisionHandler = (entityArr: UIEntityProps[], { points }) => {
+  let retVal = _.reject(entityArr, (uiBox: UIEntityProps) =>
     !_.isEmpty(_.remove(curStateClosure.bullets, (bullet: UIEntityProps) => {
       if (detectCollision(uiBox, bullet)) {
         curStateClosure.score = curStateClosure.score + points;
-        console.log('collisionHandler.tsx:: COLLISION DETECTED!');
         return true;
       }
     })));
+  return retVal;
+};
 
 /**
  * Detect collisions with bullets

@@ -38,7 +38,7 @@ export const createUIBox = (curState) => {
 export const createEnemy = (curState, enemies, enemyType) => {
   switch (enemyType) {
     case 'crawler':
-      console.log('app.tsx:: created crawler!');
+      // console.log('app.tsx:: created crawler!');
       curState.enemies.crawlers.push(_.assign({}, generateEntityStartPosition(curState),
                                     { speed: 4, angle: Direction.Up, width: 13, height: 25 }));
     break;

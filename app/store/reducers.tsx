@@ -30,7 +30,6 @@ export const reducers = (state: AppStoreState = initialState, action: Action<any
       return Object.assign({}, state, { lastRendered: Date.now() });
 
     // Add to top: import { SET_UI_UPDATE_READY } from './actions.tsx';
-    // What the reducer does
     case SET_UI_UPDATE_READY:
       return Object.assign({}, state, { uiUpdateReady: true });
 
@@ -47,11 +46,11 @@ export const reducers = (state: AppStoreState = initialState, action: Action<any
         }
       });
 
-    // Add to top: import { RESOLVE_UI_STATE } from './actions.tsx';
-    //Perform calculations to determine what the current UI should display
+    //Perform calcs to determine what the current UI should display. Handles collisions, etc..
     case RESOLVE_UI_STATE:
-      let newState = resolveUIState(action.payload.time, action.payload.uiState);
-      return Object.assign({}, state, { });
+      return Object.assign({}, state, {
+        uiState: resolveUIState(action.payload.time, action.payload.uiState)
+      });
 
     default:
       return state;

@@ -21,7 +21,7 @@ let logTime = (msg, type?: string) => {
       ? _.repeat(' ', ((type) ? (len - type.length) : (len)))
       : '';
 
-  console.log(`|| ${ts}:: ${msg}${(type) ? (' ' + type + ' ') : ''}${whitespace} ||`);
+  // console.log(`|| ${ts}:: ${msg}${(type) ? (' ' + type + ' ') : ''}${whitespace} ||`);
 };
 
 let blockWrapLog = (next, titlePosition: LogTitlePosition, msg: string, type?: string) => {
@@ -41,19 +41,19 @@ export const logger = ({ getState }) => {
   console.log('-------------------------------------------');
 
   return (next) => (action) => {
-    if (!_.includes(['RESET_LAST_RENDERED_TIME', 'SET_UI_UPDATE_READY', 'CLEAR_INPUT_QUEUE'], action.type)) {
-      blockWrapLog(logTime, LogTitlePosition.Start, 'START action dispatch', action.type);
-      console.log(action.type, ': data: ', action.payload);
-    }
+    // if (!_.includes(['RESET_LAST_RENDERED_TIME', 'SET_UI_UPDATE_READY', 'CLEAR_INPUT_QUEUE'], action.type)) {
+    //   blockWrapLog(logTime, LogTitlePosition.Start, 'START action dispatch', action.type);
+    //   console.log(action.type, ': data: ', action.payload);
+    // }
 
     // Call the next dispatch method in the middleware chain. Its result will then be logged.
     let returnValue = next(action);
 
-    if (!_.includes(['RESET_LAST_RENDERED_TIME', 'SET_UI_UPDATE_READY', 'CLEAR_INPUT_QUEUE'], action.type)) {
-      console.log('state after dispatch: ', getState(), ';; returnValue: ', returnValue);
+    // if (!_.includes(['RESET_LAST_RENDERED_TIME', 'SET_UI_UPDATE_READY', 'CLEAR_INPUT_QUEUE'], action.type)) {
+    //   console.log('state after dispatch: ', getState(), ';; returnValue: ', returnValue);
 
-      blockWrapLog(logTime, LogTitlePosition.End, 'END action dispatch', action.type);
-    }
+    //   blockWrapLog(logTime, LogTitlePosition.End, 'END action dispatch', action.type);
+    // }
 
     // Likely the action itself unless a middleware further in the chain changed it
     return returnValue;

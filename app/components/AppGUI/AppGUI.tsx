@@ -76,9 +76,9 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
 
   events = {
     onClick: (e): void => {
-      console.log('AppGUI.tsx:: e', e);
-      console.log('AppGUI.tsx:: this', this);
-      console.log('AppGUI.tsx:: testStateProperty: ', this.props.testStateProperty);
+      // console.log('AppGUI.tsx:: e', e);
+      // console.log('AppGUI.tsx:: this', this);
+      // console.log('AppGUI.tsx:: testStateProperty: ', this.props.testStateProperty);
       this.props.testSwitchState(!this.props.testStateProperty);
     }
   };
@@ -114,28 +114,34 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
 
   // ** GAME LOOP ** //
   /**
-   * The game loop. Coordinates everything. Changes propagate down the tree every time it ticks.
-   * On each tick: 1) get input (from inputQueue);
-   *               2) Calc new app state (resolve position of items), then update stored app state
-   *               3) re-render views
-   *               4) Clear inputQueue
+   * Determine when the game loop logic should run - ensures it only runs on set intervals.
    */
-  tick = () => {
+  tick = (): void => {
     let time = Date.now();
-
     if (time - this.state.lastRenderedTime > 50) { // ensure game loop only ticks 20X / s
       this.setState(Object.assign({}, this.state, { lastRenderedTime: Date.now() }), () => {
-        this.props.resolveUIState(time, this.props.uiState);
-        this.handleInput(time, this.props.uiState, (newPositions) => {
-
-          newPositions = this.handleUpdates(newPositions, time);
-          this.props.setUIState(Object.assign({}, newPositions, { time: time }));
-          this.props.clearInputQueue();
-          this.props.setUIUpdateReady();
-        });
+        this.executeGameLoopActions(time);
       });
     }
     requestAnimationFrame(this.tick);
+  };
+
+  // ** GAME LOOP ** //
+  /**
+   * The game loop actions, run after a certain amount of time elapsed. 
+   * Coordinates everything, changes propagate down the UI tree. On each run:
+   *     1) get input (from inputQueue);
+   *     2) Calc new app state (resolve position of items), then update stored app state
+   *     3) re-render views & Clear inputQueue
+   */
+  executeGameLoopActions = (time: number): void => {
+    this.handleInput(time, this.props.uiState, (newPositions) => {
+      newPositions = this.props.resolveUIState(time, newPositions);
+      // newPositions = this.handleUpdates(newPositions, time);
+      this.props.setUIState(Object.assign({}, newPositions, { time: time }));
+      this.props.clearInputQueue();
+      this.props.setUIUpdateReady();
+    });
   };
 
   // ** INPUT HANDLING ** //
