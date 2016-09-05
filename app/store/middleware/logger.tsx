@@ -17,7 +17,7 @@ let logTime = (msg) => {
   console.log(`|| ${ts}:: ${msg} ${whitespace} ||`);
 };
 
-let blockWrapLog = (msg, next) => {
+let blockWrapLog = (next, msg) => {
   console.log(`${_.repeat('=', 80)}`);
   if (next) {
     next(msg);
@@ -34,19 +34,22 @@ export const logger = ({ getState }) => {
   console.log('--------------------------------------');
 
   return (next) => (action) => {
-    console.log('\n\n');
-    blockWrapLog('START action dispatch', logTime);
+    if (!_.includes(['RESET_LAST_RENDERED_TIME', 'SET_UI_UPDATE_READY', 'CLEAR_INPUT_QUEUE'], action.type)) {
+      console.log('\n\n');
+      blockWrapLog(logTime, 'START action dispatch');
+      console.log('Action dispatched: ', action.type, ': data payload: ', action.payload);
+    }
 
-    console.log('Action dispatched: ', action);
+      // Call the next dispatch method in the middleware chain. Its result will then be logged.
+      let returnValue = next(action);
 
-    // Call the next dispatch method in the middleware chain. Its result will then be logged.
-    let returnValue = next(action);
+    if (!_.includes(['RESET_LAST_RENDERED_TIME', 'SET_UI_UPDATE_READY', 'CLEAR_INPUT_QUEUE'], action.type)) {
+      console.log('state after dispatch: ', getState());
+      console.log('returnValue: ', returnValue);
 
-    console.log('state after dispatch: ', getState());
-    console.log('returnValue: ', returnValue);
-
-    blockWrapLog('END action dispatch', logTime);
-    console.log('\n\n');
+      blockWrapLog(logTime, 'END action dispatch');
+      console.log('\n\n');
+    }
 
     // Likely the action itself unless a middleware further in the chain changed it
     return returnValue;

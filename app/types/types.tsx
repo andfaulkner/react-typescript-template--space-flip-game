@@ -106,3 +106,13 @@ export interface AppState {
   };
   score: number;
 };
+
+export interface UIPositions {
+  player: UIEntityProps;
+  bullets: UIEntityProps[];
+  uiBoxes: UIEntityProps[];
+  enemies: {
+    crawlers: UIEntityProps[]
+  };
+  score?: number;
+}

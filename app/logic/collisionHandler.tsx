@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 
 import {
-  AppState, UIEntityProps
+  AppState, UIEntityProps, UIPositions
 } from '../types/types';
 
 declare function require(name: string);
@@ -29,7 +29,7 @@ export const detectCollision = (npc: UIEntityProps, bullet: UIEntityProps) =>
    (bullet.yTop > npc.yTop - npc.height));
 
 // temp storage of app state to let bulletCollisionHandler mutate it for bulletToUIEntityCollisions
-let curStateClosure: AppState;
+let curStateClosure: UIPositions;
 
 /**
  * Determine if a bullet struck a specific element; & if it did, rm the bullet from the app state
@@ -40,6 +40,8 @@ const bulletCollisionHandler = (entityArr: UIEntityProps[], { points }) =>
     !_.isEmpty(_.remove(curStateClosure.bullets, (bullet: UIEntityProps) => {
       if (detectCollision(uiBox, bullet)) {
         curStateClosure.score = curStateClosure.score + points;
+        console.log('collisionHandler.tsx:: COLLISION DETECTED!');
+        debugger;
         return true;
       }
     })));
@@ -47,7 +49,7 @@ const bulletCollisionHandler = (entityArr: UIEntityProps[], { points }) =>
 /**
  * Detect collisions with bullets
  */
-export const bulletToUIEntityCollisions = (curState: AppState): AppState => {
+export const bulletToUIEntityCollisions = (curState: UIPositions): UIPositions => {
   curStateClosure = curState;
   return Object.assign({},
     curStateClosure,
