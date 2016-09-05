@@ -60,8 +60,6 @@ export interface InputEvent {
   data: any;
 }
 
-
-
 export interface Coordinates {
   xLeft: number;
   yTop: number;
@@ -98,21 +96,23 @@ export interface AppState {
   lastRenderedTime: number;
   updateReady: boolean;
   inputQueue: any[];
-  player:  UIEntityProps;
-  bullets: UIEntityProps[];
-  uiBoxes: UIEntityProps[];
-  enemies: {
-    crawlers: EnemyCrawlerProps[]
+  uiState: {
+    player:  UIEntityProps,
+    bullets: UIEntityProps[],
+    uiBoxes: UIEntityProps[],
+    enemies: {
+      crawlers: EnemyCrawlerProps[]
+    },
+    score: number
   };
-  score: number;
 };
 
-export interface UIPositions {
+export interface UIState {
   player: UIEntityProps;
   bullets: UIEntityProps[];
   uiBoxes: UIEntityProps[];
   enemies: {
     crawlers: UIEntityProps[]
   };
-  score?: number;
+  score: number;
 }

@@ -2,7 +2,12 @@
 
 import moment from 'moment';
 
-let logTime = (msg) => {
+enum LogTitlePosition {
+  Start,
+  End
+}
+
+let logTime = (msg, type?: string) => {
   let hour = moment().get('hour');
   let minute = moment().get('minute');
   let second = moment().get('second');
@@ -10,45 +15,44 @@ let logTime = (msg) => {
 
   let ts = `T: ${hour}:${minute}:${second}.${ms}`;
 
-  let whitespace = ((70 - msg.length - ts.length) > 1)
-      ? _.repeat(' ', (70 - msg.length - ts.length))
+  let len = (70 - msg.length - ts.length);
+
+  let whitespace = (((type) ? (len - type.length) : (len)) > 1)
+      ? _.repeat(' ', ((type) ? (len - type.length) : (len)))
       : '';
 
-  console.log(`|| ${ts}:: ${msg} ${whitespace} ||`);
+  console.log(`|| ${ts}:: ${msg}${(type) ? (' ' + type + ' ') : ''}${whitespace} ||`);
 };
 
-let blockWrapLog = (next, msg) => {
-  console.log(`${_.repeat('=', 80)}`);
+let blockWrapLog = (next, titlePosition: LogTitlePosition, msg: string, type?: string) => {
+  if (titlePosition === LogTitlePosition.Start) console.log(`${_.repeat('=', 80)}`);
   if (next) {
-    next(msg);
+    next(msg, (type) ? '--> ' + type : null);
   } else {
-    console.log(msg);
+    if (titlePosition === LogTitlePosition.Start) console.log(msg + `: ${type}`);
   }
-  console.log(`${_.repeat('=', 80)}`);
+  if (titlePosition === LogTitlePosition.End) console.log(`${_.repeat('=', 80)}`);
 };
 
 export const logger = ({ getState }) => {
 
-  console.log('--------------------------------------');
-  console.log('|  REDUX LOGGER MIDDLEWARE INJECTED  |');
-  console.log('--------------------------------------');
+  console.log('-------------------------------------------');
+  console.log('|---  REDUX LOGGER MIDDLEWARE INJECTED  ---|');
+  console.log('-------------------------------------------');
 
   return (next) => (action) => {
     if (!_.includes(['RESET_LAST_RENDERED_TIME', 'SET_UI_UPDATE_READY', 'CLEAR_INPUT_QUEUE'], action.type)) {
-      console.log('\n\n');
-      blockWrapLog(logTime, 'START action dispatch');
-      console.log('Action dispatched: ', action.type, ': data payload: ', action.payload);
+      blockWrapLog(logTime, LogTitlePosition.Start, 'START action dispatch', action.type);
+      console.log(action.type, ': data: ', action.payload);
     }
 
-      // Call the next dispatch method in the middleware chain. Its result will then be logged.
-      let returnValue = next(action);
+    // Call the next dispatch method in the middleware chain. Its result will then be logged.
+    let returnValue = next(action);
 
     if (!_.includes(['RESET_LAST_RENDERED_TIME', 'SET_UI_UPDATE_READY', 'CLEAR_INPUT_QUEUE'], action.type)) {
-      console.log('state after dispatch: ', getState());
-      console.log('returnValue: ', returnValue);
+      console.log('state after dispatch: ', getState(), ';; returnValue: ', returnValue);
 
-      blockWrapLog(logTime, 'END action dispatch');
-      console.log('\n\n');
+      blockWrapLog(logTime, LogTitlePosition.End, 'END action dispatch', action.type);
     }
 
     // Likely the action itself unless a middleware further in the chain changed it

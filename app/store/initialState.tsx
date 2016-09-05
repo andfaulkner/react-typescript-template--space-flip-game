@@ -5,23 +5,23 @@ export interface AppStoreState {
   testStateProperty: boolean;
   inputQueue: InputEvent[];
   lastRenderedTime: number;
-  uiPositions: {
+  uiState: {
     player:  UIEntityProps,
     bullets: UIEntityProps[],
     uiBoxes: UIEntityProps[],
     enemies: {
       crawlers: EnemyCrawlerProps[]
-    }
+    },
+    score: number
   };
   uiUpdateReady: boolean;
-  score: number;
 };
 
 export const initialState: AppStoreState = {
   testStateProperty: false,
   inputQueue: [],
   lastRenderedTime: Date.now(),
-  uiPositions: {
+  uiState: {
     player: {
       xLeft: 0,
       yTop: 0,
@@ -34,10 +34,8 @@ export const initialState: AppStoreState = {
     uiBoxes: [],
     enemies: {
       crawlers: []
-    }
+    },
+    score: Math.floor(0.001) // help prevent coersion to boolean
   },
   uiUpdateReady: true,
-  score: Math.floor(0.001) // help prevent coersion to boolean
-  // score: 0
 };
-

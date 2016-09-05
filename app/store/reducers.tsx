@@ -2,8 +2,10 @@
 
 import { Action } from './action.tsx';
 import { TEST_SWITCH_STATE, ADD_ITEM_TO_INPUT_QUEUE, CLEAR_INPUT_QUEUE,
-         RESET_LAST_RENDERED_TIME, SET_UI_STATE, SET_UI_UPDATE_READY } from './actions.tsx';
+         RESET_LAST_RENDERED_TIME, SET_UI_STATE, SET_UI_UPDATE_READY,
+         RESOLVE_UI_STATE } from './actions.tsx';
 import { initialState, AppStoreState } from './initialState.tsx';
+import { resolveUIState } from './reducers/resolveUIState.tsx';
 
 // All actions take this form:
 // { type: string;     payload: T;     error?: boolean;     meta?: any; }
@@ -36,14 +38,20 @@ export const reducers = (state: AppStoreState = initialState, action: Action<any
     case SET_UI_STATE:
       let { player, bullets, uiBoxes, enemies, score } = action.payload;
       return Object.assign({}, state, {
-        uiPositions: {
-          player: (player) ? player : state.uiPositions.player,
-          bullets: (bullets) ? bullets : state.uiPositions.bullets,
-          uiBoxes: (uiBoxes) ? uiBoxes : state.uiPositions.uiBoxes,
-          enemies: (enemies) ? enemies : state.uiPositions.enemies,
-        },
-        score: (score) ? score : state.score
+        uiState: {
+          player: (player) ? player : state.uiState.player,
+          bullets: (bullets) ? bullets : state.uiState.bullets,
+          uiBoxes: (uiBoxes) ? uiBoxes : state.uiState.uiBoxes,
+          enemies: (enemies) ? enemies : state.uiState.enemies,
+          score: (score) ? score : state.uiState.score
+        }
       });
+
+    // Add to top: import { RESOLVE_UI_STATE } from './actions.tsx';
+    //Perform calculations to determine what the current UI should display
+    case RESOLVE_UI_STATE:
+      let newState = resolveUIState(action.payload.time, action.payload.uiState);
+      return Object.assign({}, state, { });
 
     default:
       return state;

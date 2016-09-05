@@ -1,5 +1,5 @@
 import { Action } from './action.tsx';
-import { InputEvent, UIEntityProps, UIPositions } from '../types/types.tsx';
+import { InputEvent, UIEntityProps, UIState } from '../types/types.tsx';
 
 
 export const TEST_SWITCH_STATE = 'TEST_SWITCH_STATE';
@@ -40,7 +40,7 @@ export const resetLastRenderedTime = (): Action<{}> => ({
 
 export const SET_UI_STATE = 'SET_UI_STATE';
 
-export const setUIState = (newState): Action<UIPositions> => ({
+export const setUIState = (newState): Action<UIState> => ({
   type: SET_UI_STATE,
   payload: newState
 });
@@ -51,3 +51,14 @@ export const setUIUpdateReady = (): Action<{}> => ({
   type: SET_UI_UPDATE_READY,
   payload: { }
 });
+
+export const RESOLVE_UI_STATE = 'RESOLVE_UI_STATE';
+
+export const resolveUIState = (time: number, uiState: UIState): Action<any> => ({
+  type: RESOLVE_UI_STATE,
+  payload: {
+    time,
+    uiState
+  }
+});
+

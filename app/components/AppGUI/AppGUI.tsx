@@ -14,7 +14,7 @@ import { HUD } from '../HUD/HUD';
 import { NavHeader } from '../NavHeader/NavHeader.tsx';
 
 // TYPES
-import { PlayerColor, InputType, InputEvent, AppState, controls, UIEntityProps, UIPositions } from '../../types/types.tsx';
+import { PlayerColor, InputType, InputEvent, AppState, controls, UIEntityProps, UIState } from '../../types/types.tsx';
 
 // LOGIC
 import { resolvePosition, resolveSpeed } from '../../logic/resolvePlayerMovement.tsx';
@@ -26,7 +26,7 @@ import { bulletToUIEntityCollisions } from '../../logic/collisionHandler.tsx';
 // REDUX
 import { connect } from 'react-redux';
 import { addItemToInputQueue, clearInputQueue, testSwitchState_AC,
-         resetLastRenderedTime, setUIState, setUIUpdateReady } from '../../store/actions.tsx';
+         resetLastRenderedTime, setUIState, setUIUpdateReady, resolveUIState } from '../../store/actions.tsx';
 
 require('./AppGUI.css');
 
@@ -56,12 +56,12 @@ interface GameArenaProps {
   resetLastRenderedTime: Function;
   setUIState: Function;
   setUIUpdateReady: Function;
+  resolveUIState: Function;
 
   testStateProperty: boolean;
   lastRenderedTime: number;
   inputQueue: InputEvent[];
-  uiPositions: UIPositions; // TODO more specific
-  score: number;
+  uiState: UIState; // TODO more specific
 };
 
 /**
@@ -85,7 +85,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
 
   shouldComponentUpdate = (nextProps, nextState) => {
     // AHA THIS IS THE KEY! THIS IS HOW YOU CAN MAKE THIS WORK WITH A GAME LOOP! TODO: SPLIT THIS COMPONENT.
-    if (!_.isEqual(this.props.uiPositions.player, nextProps.uiPositions)) {
+    if (!_.isEqual(this.props.uiState.player, nextProps.uiState)) {
       return true;
     }
     return false;
@@ -100,12 +100,12 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
         <div className="layout-transparent mdl-layout mdl-js-layout">
           <NavHeader />
           <main className="mdl-layout__content">
-            <Player color={ PlayerColor.Red } width={ this.props.spriteSize } {...this.props.uiPositions.player}/>
-            { renderEntity(this.props.uiPositions.bullets, Bullet, {}) }
-            { renderEntity(this.props.uiPositions.enemies.crawlers,
+            <Player color={ PlayerColor.Red } width={ this.props.spriteSize } {...this.props.uiState.player}/>
+            { renderEntity(this.props.uiState.bullets, Bullet, {}) }
+            { renderEntity(this.props.uiState.enemies.crawlers,
                            EnemyCrawler, { reachedEnd: false }) }
-            { renderEntity(this.props.uiPositions.uiBoxes, BoxUIEntity,  {}) }
-            <HUD score={ this.props.score } time={ this.state.time } />
+            { renderEntity(this.props.uiState.uiBoxes, BoxUIEntity,  {}) }
+            <HUD score={ this.props.uiState.score } time={ this.state.time } />
           </main>
         </div>
       </KeyController>
@@ -124,10 +124,9 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
     let time = Date.now();
 
     if (time - this.state.lastRenderedTime > 50) { // ensure game loop only ticks 20X / s
-
       this.setState(Object.assign({}, this.state, { lastRenderedTime: Date.now() }), () => {
-
-        this.handleInput(time, this.props.uiPositions, (newPositions) => {
+        this.props.resolveUIState(time, this.props.uiState);
+        this.handleInput(time, this.props.uiState, (newPositions) => {
 
           newPositions = this.handleUpdates(newPositions, time);
           this.props.setUIState(Object.assign({}, newPositions, { time: time }));
@@ -143,7 +142,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
   /**
    * calculate new positions of all the things
    */
-  handleInputQueue = (curUI: UIPositions, inputQueue: InputEvent[]) => {
+  handleInputQueue = (curUI: UIState, inputQueue: InputEvent[]) => {
     // console.logeMove#handleInputQueue: inputQueue', this.props.inputQueue);
 
     _.each(this.props.inputQueue, (inputEvent: InputEvent) => {
@@ -166,9 +165,9 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
   /**
    * Handle UI changes that occur as a direct result of user input (e.g. player movement, shooting)
    */
-  handleInput = (time: number, curUI: UIPositions, cb: Function) => {
+  handleInput = (time: number, curUI: UIState, cb: Function) => {
     if (this.props.inputQueue.length > 0) { // do nothing if there are no input events
-      curUI = this.handleInputQueue(this.props.uiPositions, this.props.inputQueue);
+      curUI = this.handleInputQueue(this.props.uiState, this.props.inputQueue);
       this.props.clearInputQueue();
       cb(curUI);
     } else {
@@ -180,8 +179,8 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
   /**
    * Handle UI changes that occur without input from the user (e.g. bullet and uiBox movement)
    */
-  handleUpdates = (curUI: UIPositions, time: number): UIPositions => {
-    curUI.score = (curUI.score) ? curUI.score : this.props.score;
+  handleUpdates = (curUI: UIState, time: number): UIState => {
+    curUI.score = (curUI.score) ? curUI.score : this.props.uiState.score;
     curUI.bullets = updateBulletPositions(curUI.bullets);
     curUI = this.moveNPCs(curUI);
     curUI = this.generateNPCs(curUI);
@@ -193,7 +192,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
   /**
    * Randomly generate NPCs (self-directed UI elements such as enemies) 
    */
-  generateNPCs = (curUI: UIPositions, odds: number = 20): UIPositions => {
+  generateNPCs = (curUI: UIState, odds: number = 20): UIState => {
     // create NPC at random - approximately once / 40 ticks (every 4s). Don't create more than 10.
     if ((curUI.uiBoxes.length <= 10) && (_.random(0, 20) === 20)) {
       switch (_.sample(['uiBox', 'enemy.crawler'])) {
@@ -213,7 +212,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
    * Generate random movements from enemies
    * ** ONGOING **
    */
-  moveNPCs = (curUI: UIPositions): UIPositions => {
+  moveNPCs = (curUI: UIState): UIState => {
     curUI.enemies.crawlers = _.map(curUI.enemies.crawlers, (crawler: EnemyCrawlerProps) => {
       crawler.xLeft -= 1;
       if ((crawler.xLeft - crawler.width) < -300) {
@@ -226,7 +225,6 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
   };
 };
 
-
 //
 // ************************ REDUX ************************* //
 //
@@ -236,8 +234,7 @@ const mapStateToProps = (state) => ({
   lastRenderedTime: state.lastRenderedTime,
   testStateProperty: state.testStateProperty,
   uiUpdateReady: state.testStateProperty,
-  uiPositions: state.uiPositions,
-  score: state.score
+  uiState: state.uiState
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -245,8 +242,9 @@ const mapDispatchToProps = (dispatch) => ({
   clearInputQueue: (): void => { dispatch(clearInputQueue()); },
   resetLastRenderedTime: (): void => { dispatch(resetLastRenderedTime()); },
   testSwitchState: (newState: boolean): void => { dispatch(testSwitchState_AC(newState)); },
-  setUIState: (newState): void => { dispatch(setUIState(newState)); },
-  setUIUpdateReady: (): void => { dispatch(setUIUpdateReady()); }
+  setUIState: (newState: UIState): void => { dispatch(setUIState(newState)); },
+  setUIUpdateReady: (): void => { dispatch(setUIUpdateReady()); },
+  resolveUIState: (time: number, uiState: UIState): void => { dispatch(resolveUIState(time, uiState)); },
 });
 
 export const AppGUI: any = connect(
