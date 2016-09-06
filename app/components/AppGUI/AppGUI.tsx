@@ -5,7 +5,7 @@ import * as React from 'react';
 
 // CUSTOM UI ELEMENTS
 import { Arena } from '../Arena/Arena.tsx';
-import { KeyController } from '../KeyController/KeyController';
+import { KeyControllerContainer } from '../KeyController/KeyControllerContainer.tsx';
 import { NavHeader } from '../NavHeader/NavHeader.tsx';
 
 // TYPES
@@ -76,7 +76,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
 
   render() {
     return (
-      <KeyController onClick={this.events.onClick}>
+      <KeyControllerContainer onClick={this.events.onClick}>
         <div className="layout-transparent mdl-layout mdl-js-layout">
           <NavHeader />
           <Arena
@@ -86,7 +86,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
             time={ this.state.time }
           />
         </div>
-      </KeyController>
+      </KeyControllerContainer>
     );
   };
 

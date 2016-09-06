@@ -2,29 +2,16 @@
 
 declare function require(name: string);
 
-import * as _ from 'lodash';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import * as $ from 'jquery';
 
 import { UIEntity } from '../UIEntity/UIEntity';
 
 import {
-  Coordinates,
+  BoxCoordinates,
   PlayerColor,
-  Dimension,
-  Direction,
-  Input,
-  controls,
-  UIEntityVector,
-  BoxCoordinates
 } from '../../types/types.tsx';
 
-import { connect } from "react-redux";
-
-import { bindActionCreators } from "redux";
-
-require('./Player.css');
+require('./Player.css'); // tslint:disable-line
 
 export interface PlayerProps {
   angle: number;
@@ -41,12 +28,12 @@ const width = 30;
 export class Player extends UIEntity<PlayerProps, { }> {
 
   /**
-  * Convert numeric position to px value for css - determines how much the ship should move
-  */
+   * Convert numeric position to px value for css - determines how much the ship should move
+   */
   calcOffset = (): {marginTop: string; marginLeft: string} => (
     {
       marginTop: (-1 * this.props.yTop) + 'px',
-      marginLeft: (-1 * this.props.xLeft) + 'px'
+      marginLeft: (-1 * this.props.xLeft) + 'px',
     });
 
   /**
@@ -56,21 +43,19 @@ export class Player extends UIEntity<PlayerProps, { }> {
     xLeft: this.props.xLeft,
     xRight: this.props.xLeft - width,
     yTop: this.props.yTop,
-    yBottom: this.props.yTop - width
+    yBottom: this.props.yTop - width,
   })
 
   render() {
+    const rotation = `rotate(${this.props.angle - 45}deg)`;
     return (
       <div>
-        <div className="centered" id="player" style={
-          Object.assign({},
-            this.calcOffset(),
-            {transform: `rotate(${this.props.angle - 45}deg)`})
-        }>
-        </div>
+        <div
+          className="centered"
+          id="player"
+          style={ Object.assign({}, this.calcOffset(), {transform: rotation}) }
+        />
       </div>
     );
   }
 };
-
-// Perhaps add against later, inside div.centered#player: <Cannon />
