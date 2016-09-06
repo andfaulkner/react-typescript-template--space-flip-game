@@ -22,6 +22,7 @@ export const reducers = (state: AppStoreState = initialState, action: Action<any
       newInputQueue.push(action.payload);
       return Object.assign({}, state, { inputQueue: newInputQueue });
 
+    // action: {type: "CLEAR_INPUT_QUEUE"}
     case actions.CLEAR_INPUT_QUEUE:
       return Object.assign({}, state, { inputQueue: [] });
 
@@ -32,19 +33,6 @@ export const reducers = (state: AppStoreState = initialState, action: Action<any
     // Add to top: import { SET_UI_UPDATE_READY } from './actions.tsx';
     case actions.SET_UI_UPDATE_READY:
       return Object.assign({}, state, { uiUpdateReady: true });
-
-    // Saves a timestamp marking when the main game arena was last rendered
-    case actions.SET_UI_STATE:
-      let { player, bullets, uiBoxes, enemies, score } = action.payload;
-      return Object.assign({}, state, {
-        uiState: {
-          player: (player) ? player : state.uiState.player,
-          bullets: (bullets) ? bullets : state.uiState.bullets,
-          uiBoxes: (uiBoxes) ? uiBoxes : state.uiState.uiBoxes,
-          enemies: (enemies) ? enemies : state.uiState.enemies,
-          score: (score) ? score : state.uiState.score,
-        },
-      });
 
     //Perform calcs to determine what the current UI should display. Handles collisions, etc..
     case actions.RESOLVE_UI_STATE:

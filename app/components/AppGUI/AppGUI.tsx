@@ -24,7 +24,7 @@ import { actionCreators } from '../../store/actions.tsx';
 import { connect } from 'react-redux';
 
 let { addItemToInputQueue, clearInputQueue, testSwitchState,
-      resetLastRenderedTime, setUIState, setUIUpdateReady, resolveUIState } = actionCreators;
+      resetLastRenderedTime, setUIUpdateReady, resolveUIState } = actionCreators;
 
 console.log('AppGUI.tsx:: actionCreators', actionCreators);
 
@@ -54,7 +54,6 @@ interface GameArenaProps {
   clearInputQueue: Function;
   testSwitchState: Function;
   resetLastRenderedTime: Function;
-  setUIState: Function;
   setUIUpdateReady: Function;
   resolveUIState: Function;
 
@@ -130,8 +129,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
    */
   executeGameLoopActions = (time: number): void => {
     this.handleInput(time, this.props.uiState, (newPositions) => {
-      this.props.setUIState(Object.assign({},
-        this.props.resolveUIState(time, newPositions), { time }));
+      this.props.resolveUIState(time, newPositions);
       this.props.clearInputQueue();
       this.props.setUIUpdateReady();
     });
@@ -186,7 +184,6 @@ const mapDispatchToProps = (dispatch) => ({
   clearInputQueue: (): void => { dispatch(clearInputQueue()); },
   resetLastRenderedTime: (): void => { dispatch(resetLastRenderedTime()); },
   testSwitchState: (newState: boolean): void => { dispatch(testSwitchState(newState)); },
-  setUIState: (newState: UIState): void => { dispatch(setUIState(newState)); },
   setUIUpdateReady: (): void => { dispatch(setUIUpdateReady()); },
   resolveUIState: (time: number, uiState: UIState): void => { dispatch(resolveUIState(time, uiState)); },
 });
