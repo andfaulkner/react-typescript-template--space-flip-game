@@ -4,13 +4,9 @@ import * as _ from 'lodash';
 import * as React from 'react';
 
 // CUSTOM UI ELEMENTS
-import { BoxUIEntity } from '../BoxUIEntity/BoxUIEntity.tsx';
-import { Bullet } from '../Bullet/Bullet.tsx';
-import { EnemyCrawler } from '../EnemyCrawler/EnemyCrawler';
-import { HUD } from '../HUD/HUD';
+import { Arena } from '../Arena/Arena.tsx';
 import { KeyController } from '../KeyController/KeyController';
 import { NavHeader } from '../NavHeader/NavHeader.tsx';
-import { Player } from '../Player/Player.tsx';
 
 // TYPES
 import { InputEvent, InputType, PlayerColor, UIState } from '../../types/types.tsx';
@@ -29,11 +25,6 @@ let { addItemToInputQueue, clearInputQueue, testSwitchState,
 console.log('AppGUI.tsx:: actionCreators', actionCreators);
 
 require('./AppGUI.css'); // tslint:disable-line
-
-// INTERFACES
-// const uiBoxWidth = 25;
-// const crawlerWidth = 28;
-// const bulletWidth = 7;
 
 interface GameArenaState {
   time: number;
@@ -78,30 +69,22 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
 
   componentWillMount = () => requestAnimationFrame(this.tick); // kickstart the game loop
 
-  shouldComponentUpdate = (nextProps, nextState) => {
     // TODO this is fucked up, look at the equality comparison, it makes no sense
     // AHA THIS IS THE KEY! THIS IS HOW YOU CAN MAKE THIS WORK WITH A GAME LOOP! TODO: SPLIT THIS COMPONENT.
-    if (!_.isEqual(this.props.uiState.player, nextProps.uiState)) {
-      return true;
-    }
-    return false;
-  };
+  shouldComponentUpdate = (nextProps, nextState) =>
+    !_.isEqual(this.props.uiState.player, nextProps.uiState);
 
   render() {
-    const renderEntity = (entityCollection, EntityComponent, extraProps: Object) =>
-        _.map(entityCollection, (entity, index) =>
-            <EntityComponent key={index} {...extraProps} {...entity} />);
     return (
       <KeyController onClick={this.events.onClick}>
         <div className="layout-transparent mdl-layout mdl-js-layout">
           <NavHeader />
-          <main className="mdl-layout__content">
-            <Player color={ PlayerColor.Red } width={ this.props.spriteSize } {...this.props.uiState.player}/>
-            { renderEntity(this.props.uiState.bullets, Bullet, {}) }
-            { renderEntity(this.props.uiState.enemies.crawlers, EnemyCrawler, { reachedEnd: false }) }
-            { renderEntity(this.props.uiState.uiBoxes, BoxUIEntity,  {}) }
-            <HUD score={ this.props.uiState.score } time={ this.state.time } />
-          </main>
+          <Arena
+            uiState={this.props.uiState}
+            spriteSize={this.props.spriteSize}
+            color={ PlayerColor.Red }
+            time={ this.state.time }
+          />
         </div>
       </KeyController>
     );
@@ -171,13 +154,15 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
 // ************************ REDUX ************************* //
 //
 
-const mapStateToProps = (state) => ({
-  inputQueue: state.inputQueue,
-  lastRenderedTime: state.lastRenderedTime,
-  testStateProperty: state.testStateProperty,
-  uiUpdateReady: state.testStateProperty,
-  uiState: state.uiState,
-});
+const mapStateToProps = (state) => {
+  return {
+    inputQueue: state.input.inputQueue,
+    lastRenderedTime: state.ui.lastRenderedTime,
+    testStateProperty: state.input.testStateProperty,
+    uiUpdateReady: state.input.testStateProperty,  /// TODO STILL REQUIRES DEFINING, ALL THIS DOES IS TEST
+    uiState: state.ui.uiState,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   addItemToInputQueue: (input: InputEvent): void => { dispatch(addItemToInputQueue(input)); },

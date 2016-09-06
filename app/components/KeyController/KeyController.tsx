@@ -63,7 +63,7 @@ export class KeyControllerUnwrapped extends React.Component<KeyControllerProps, 
 };
 
 const mapStateToProps = (state) => ({
-  inputQueue: state.inputQueue,
+  inputQueue: state.input.inputQueue,
 });
 
 const mapDispatchToProps = (dispatch) => ({

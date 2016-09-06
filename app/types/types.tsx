@@ -90,22 +90,6 @@ export interface UIEntityBoxProps {
   timeCreated?: number;
 }
 
-export interface AppState {
-  time:    number;
-  lastRenderedTime: number;
-  updateReady: boolean;
-  inputQueue: any[];
-  uiState: {
-    player:  UIEntityProps,
-    bullets: UIEntityProps[],
-    uiBoxes: UIEntityProps[],
-    enemies: {
-      crawlers: EnemyCrawlerProps[]
-    },
-    score: number
-  };
-};
-
 export interface UIState {
   player: UIEntityProps;
   bullets: UIEntityProps[];
@@ -115,3 +99,11 @@ export interface UIState {
   };
   score: number;
 }
+
+export interface AppState {
+  time:    number;
+  lastRenderedTime: number;
+  updateReady: boolean;
+  inputQueue: any[];
+  uiState: UIState;
+};
