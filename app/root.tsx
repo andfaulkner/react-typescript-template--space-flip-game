@@ -3,15 +3,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Provider } from 'react-redux';
+import { AppGUIContainer } from './components/AppGUI/AppGUIContainer.tsx';
 import { store } from './store/store.tsx'; // only import from here
-import { AppGUI } from './components/AppGUI/AppGUI.tsx';
+import { Provider } from 'react-redux';
 
 export class Root extends React.Component<{}, {}> {
   render() {
     return (
       <Provider store={store}>
-        <AppGUI spriteSize={20} />
+        <AppGUIContainer spriteSize={20} />
       </Provider>
     );
   }

@@ -15,15 +15,6 @@ import { InputEvent, InputType, PlayerColor, UIState } from '../../types/types.t
 import { createBullet } from '../../logic/createBullet.tsx';
 import { resolvePosition, resolveSpeed } from '../../logic/resolvePlayerMovement.tsx';
 
-// REDUX
-import { actionCreators } from '../../store/actions.tsx';
-import { connect } from 'react-redux';
-
-let { addItemToInputQueue, clearInputQueue, testSwitchState,
-      resetLastRenderedTime, setUIUpdateReady, resolveUIState } = actionCreators;
-
-console.log('AppGUI.tsx:: actionCreators', actionCreators);
-
 require('./AppGUI.css'); // tslint:disable-line
 
 interface GameArenaState {
@@ -55,9 +46,9 @@ interface GameArenaProps {
 };
 
 /**
- * Entry point for the whole application (excepting the redux wrapper)
+ * Entry point for the app's GUI (excepting the redux wrapper in root.jsx...for now.)
  */
-class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
+export class AppGUI extends React.Component<GameArenaProps, GameArenaState> {
   events = {
     onClick: (e): void => {
       console.log('AppGUI.tsx:: clicked the component!');
@@ -69,8 +60,8 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
 
   componentWillMount = () => requestAnimationFrame(this.tick); // kickstart the game loop
 
-    // TODO this is fucked up, look at the equality comparison, it makes no sense
-    // AHA THIS IS THE KEY! THIS IS HOW YOU CAN MAKE THIS WORK WITH A GAME LOOP! TODO: SPLIT THIS COMPONENT.
+  // TODO this is fucked up, look at the equality comparison, it makes no sense
+  // AHA THIS IS THE KEY! THIS IS HOW YOU CAN MAKE THIS WORK WITH AN OUTER GAME LOOP! TODO: SPLIT THIS COMPONENT.
   shouldComponentUpdate = (nextProps, nextState) =>
     !_.isEqual(this.props.uiState.player, nextProps.uiState);
 
@@ -123,7 +114,7 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
    */
   handleInputQueue = (curUI: UIState, inputQueue: InputEvent[]) => {
     _.each(this.props.inputQueue, (inputEvent: InputEvent) => {
-      let inputType = InputType[inputEvent.type];
+      const inputType = InputType[inputEvent.type];
 
       if (inputType === InputType[InputType.PlayerMove]) {
         curUI.player = resolvePosition(curUI.player, inputEvent.input);
@@ -149,31 +140,3 @@ class AppGUIUnwrapped extends React.Component<GameArenaProps, GameArenaState> {
     cb(curUI);
   };
 };
-
-//
-// ************************ REDUX ************************* //
-//
-
-const mapStateToProps = (state) => {
-  return {
-    inputQueue: state.input.inputQueue,
-    lastRenderedTime: state.ui.lastRenderedTime,
-    testStateProperty: state.input.testStateProperty,
-    uiUpdateReady: state.input.testStateProperty,  /// TODO STILL REQUIRES DEFINING, ALL THIS DOES IS TEST
-    uiState: state.ui.uiState,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  addItemToInputQueue: (input: InputEvent): void => { dispatch(addItemToInputQueue(input)); },
-  clearInputQueue: (): void => { dispatch(clearInputQueue()); },
-  resetLastRenderedTime: (): void => { dispatch(resetLastRenderedTime()); },
-  testSwitchState: (newState: boolean): void => { dispatch(testSwitchState(newState)); },
-  setUIUpdateReady: (): void => { dispatch(setUIUpdateReady()); },
-  resolveUIState: (time: number, uiState: UIState): void => { dispatch(resolveUIState(time, uiState)); },
-});
-
-export const AppGUI: any = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AppGUIUnwrapped as any);
